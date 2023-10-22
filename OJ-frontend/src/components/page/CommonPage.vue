@@ -8,9 +8,10 @@
       </template>
     </header>
 
-    <!-- <n-card flex-1 rounded-10>
-     
-    </n-card> -->
+    <n-card flex-1 rounded-10 v-if="cardWrap">
+      <slot />
+    </n-card>
+
     <slot />
   </AppPage>
 </template>
@@ -29,6 +30,10 @@ defineProps({
     type: String,
     default: undefined,
   },
+  cardWrap: {
+    type: Boolean,
+    default: false
+  }
 })
 const route = useRoute()
 </script>

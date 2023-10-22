@@ -5,14 +5,22 @@ export const basicRoutes = [
     component: () => import('@/views/error-page/404.vue'),
     isHidden: true,
   },
-
   {
-    name: 'Login',
+    name: 'UserLogin',
     path: '/login',
-    component: () => import('@/views/login/index.vue'),
+    component: () => import('@/views/login/user-login.vue'),
     isHidden: true,
     meta: {
       title: '登录页',
+    },
+  },
+  {
+    name: 'AdminLogin',
+    path: '/admin-login',
+    component: () => import('@/views/login/admin-login.vue'),
+    isHidden: true,
+    meta: {
+      title: '管理员登录页',
     },
   },
   // {

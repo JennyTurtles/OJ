@@ -18,7 +18,7 @@ export default {
       path: 'index',
       component: () => import('./index.vue'),
       meta: {
-        title: '学生',
+        title: '首页',
         icon: 'ic:baseline-table-view',
         role: [],
         requireAuth: false,
@@ -32,8 +32,8 @@ export default {
       meta: {
         title: '考试',
         icon: 'ic:baseline-table-view',
-        role: [],
-        requireAuth: false,
+        role: ['student'],
+        requireAuth: true,
         keepAlive: true,
       },
     },
@@ -54,7 +54,19 @@ export default {
       path: 'faq',
       component: () => import('./faq/index.vue'),
       meta: {
-        title: '加入班级',
+        title: '常见问题及解答',
+        icon: 'ic:baseline-table-view',
+        role: [],
+        requireAuth: false,
+        keepAlive: true,
+      },
+    },
+    {
+      name: 'Signup',
+      path: 'signup',
+      component: () => import('./signup/index.vue'),
+      meta: {
+        title: '登录',
         icon: 'ic:baseline-table-view',
         role: [],
         requireAuth: false,

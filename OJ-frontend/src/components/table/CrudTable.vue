@@ -9,8 +9,9 @@
     :scroll-x="scrollX"
     :columns="columns"
     :data="tableData"
-    :row-key="(row) => row[rowKey]"
+    :row-key="getKey"
     :pagination="isPagination ? pagination : false"
+    
     @update:checked-row-keys="onChecked"
     @update:page="onPageChange"
   />
@@ -81,6 +82,9 @@ const initQuery = { ...props.queryItems }
 const tableData = ref([])
 const pagination = reactive({ page: 1, pageSize: 10 })
 
+
+const getKey = (row) => row[rowKey]
+
 async function handleQuery() {
   try {
     loading.value = true
@@ -125,6 +129,7 @@ function onPageChange(currentPage) {
   }
 }
 function onChecked(rowKeys) {
+  console.log(rowKeys);
   if (props.columns.some((item) => item.type === 'selection')) {
     emit('onChecked', rowKeys)
   }

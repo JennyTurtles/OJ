@@ -5,7 +5,8 @@
       dark:bg-dark
     >
    
-    <div w-320 flex-col px-20 py-35>
+    <div w-320 flex-col px-20 py-35 relative>
+      <SvgIcon v-if="showCloseIcon" icon="close" color="white" class="absolute right-0 top-0 cursor-pointer" @click="$emit('close')"/>  
       <h5 f-c-c text-24 font-normal color="#6a6a6a" mb-30>
         <img src="@/assets/images/logo.png" height="50" class="mr-10" />
         {{ title }}
@@ -70,8 +71,24 @@
 import { lStorage, setToken } from '@/utils'
 import { useStorage } from '@vueuse/core'
 import { addDynamicRoutes } from '@/router'
-import api from '@/api'
 
+const props = defineProps({
+  successPath: {
+    type: String, 
+    default: ''
+  },
+  showCloseIcon: {
+    type: Boolean,
+    default: true,
+  },
+  login:{
+    type:  Function,
+    require: true
+  }
+})
+
+
+const emit = defineEmits(['close'])  
 
 const title = import.meta.env.VITE_TITLE
 
@@ -130,18 +147,21 @@ async function handleLogin() {
     try {
       loading.value = true
       $message.loading('正在验证...')
-      const res = await api.login({ name, password: password.toString() })
+      const res = await props.login({ name, password: password.toString() })
       console.log(res);
       $message.success('登录成功')
       setToken(res.data.token)
 
       await addDynamicRoutes()
+      emit('close')
       if (query.redirect) {
         const path = query.redirect
         Reflect.deleteProperty(query, 'redirect')
         router.push({ path, query })
       } else {
-        router.push('/')
+        if(props.successPath){
+          router.push(props.successPath)
+        }
       }
     } catch (error) {
       console.error(error)
@@ -151,8 +171,6 @@ async function handleLogin() {
   } catch (error) {
     console.error(error) //未通过前端验证
   }
-
-  
   
 }
 </script>

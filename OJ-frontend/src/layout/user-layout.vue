@@ -1,13 +1,11 @@
 <template>
-  <n-layout wh-full>
-    <article flex-col flex-1 overflow-hidden>
+  <div wh-full flex-col overflow-hidden dark="text-white">
       <header
         border-b="1 solid #eee"
-        class="f-c-c bg-primary text-white"
+        class="bg-primary text-white sticky "
         dark="bg-dark border-0"
-        :style="`height: ${header.height}px`"
       >
-        <div class="f-c-c container-w w-full h-full">
+        <div class="f-c-c container-w w-full m-auto" :style="`height: ${header.height}px`">
           <div flex items-center>
             <img src="@/assets/images/logo.png" height="44" class="mr-30" />
           </div>
@@ -32,24 +30,27 @@
             </div>
             </n-dropdown>
           </div>
-          
-          <div class="f-c-c gap-x-10">
-            <n-button type="default" color="#fff" ghost>
-              注册
-            </n-button>
+
+          <div v-if="userStore.role.length>0 && userStore.role.some(r=>r==='student')">
+              <UserAvatar />  
+          </div>
+          <div class="f-c-c gap-x-10" v-else>
+            
             <n-button type="default" color="#fff" ghost @click="showModal = true">
               登录
+            </n-button>
+            <n-button type="default" color="#fff" ghost @click="$router.push({name:'Signup'})">
+              注册
             </n-button>
             <!-- <n-button text color="#fff" h-full px-10 size="small">注册</n-button>
             <span px-8>或</span>
             <n-button text color="#fff" h-full px-10 size="small">登录</n-button> -->
           </div>
+          
         </div>
       </header>
-      
 
-
-      <section flex-1 overflow-hidden bg-hex-f5f6fb dark:bg-hex-101014>
+      <section flex-1 min-h-300 overflow-hidden flex-col items-center bg-hex-f5f6fb dark:bg-hex-101014>
         <!-- 登录Modal -->
         <n-modal
           v-model:show="showModal"
@@ -61,7 +62,7 @@
           :segmented="segmented"
         >
          
-        <LoginForm />
+        <LoginForm :login="api.login" @close="showModal=false"/>
          
         </n-modal>
         <router-view v-slot="{ Component, route }">
@@ -70,18 +71,20 @@
           </KeepAlive>
         </router-view>
       </section>
-    </article>
-  </n-layout>
+  </div>
 </template>
 
 <script setup>
 import {ref} from 'vue'
-import { useAppStore } from '@/store'
+import { useAppStore, useUserStore } from '@/store'
 import { header } from '~/settings'
 import { useRouter } from 'vue-router';
 import LoginForm from '../components/LoginForm.vue';
+import UserAvatar from './components/header/components/UserAvatar.vue';
+import api from '@/api/user';
 
 const appStore = useAppStore()
+const userStore = useUserStore()
 const router = useRouter()
 
 const helpOptions = [

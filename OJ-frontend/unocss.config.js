@@ -9,7 +9,7 @@ export default defineConfig({
   },
   presets: [presetUno(), presetAttributify(), presetRemToPx({ baseFontSize: 4 })],
   shortcuts: [
-    ['container-w', 'max-w-1200 min-w-390 pl-24px pr-24px'],
+    ['container-w', 'max-w-1200 min-w-390 px-24px lg:px-40'],
     ['wh-full', 'w-full h-full'],
     ['f-c-c', 'flex justify-center items-center'],
     ['flex-col', 'flex flex-col'],

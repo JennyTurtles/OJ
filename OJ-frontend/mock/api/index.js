@@ -1,5 +1,5 @@
 import auth from './auth'
 import user from './user'
-import post from './post'
+import exam from './exam'
 
-export default [...auth, ...user, ...post]
+export default [...auth, ...user, ...exam]

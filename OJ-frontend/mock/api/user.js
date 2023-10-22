@@ -1,19 +1,19 @@
 import { resolveToken } from '../utils'
 
 const users = {
-  admin: {
+  admin123: {
     id: 1,
     name: '大脸怪(admin)',
     avatar: 'https://assets.qszone.com/images/avatar.jpg',
     email: 'Ronnie@123.com',
     role: ['admin'],
   },
-  editor: {
+  student123: {
     id: 2,
     name: '大脸怪(editor)',
     avatar: 'https://assets.qszone.com/images/avatar.jpg',
     email: 'Ronnie@123.com',
-    role: ['editor'],
+    role: ['student'],
   },
   guest: {
     id: 3,
@@ -28,6 +28,7 @@ export default [
     method: 'get',
     response: ({ headers }) => {
       const token = resolveToken(headers?.authorization)
+      console.log(token)
       return {
         code: 0,
         data: {
