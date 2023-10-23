@@ -9,19 +9,19 @@ public class RespBean extends Throwable {
     private Object data;
 
     public static RespBean ok(String msg) {
-        return new RespBean(200, msg, null);
+        return new RespBean(0, msg, null);
     }
 
     public static RespBean ok(String msg, Object obj) {
-        return new RespBean(200, msg, obj);
+        return new RespBean(0, msg, obj);
     }
 
     public static RespBean error(String msg) {
-        return new RespBean(500, msg, null);
+        return new RespBean(400, msg, null);
     }
 
     public static RespBean error(String msg, Object obj) {
-        return new RespBean(500, msg, obj);
+        return new RespBean(400, msg, obj);
     }
 
     public RespBean(Integer code, String message, Object data) {
