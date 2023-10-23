@@ -6,10 +6,14 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import edu.dhu.dao.AccountDao;
 import edu.dhu.model.Account;
 import edu.dhu.dao.LoginDao;
 import edu.dhu.exception.Constants;
 import edu.dhu.exception.ServiceException;
+import edu.dhu.util.TokenUtils;
+import lombok.val;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -28,12 +32,14 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtInterceptor implements HandlerInterceptor {
 
     @Resource
-    private LoginDao loginDao;
+    private AccountDao accountDao;
+    @Resource
+    private TokenUtils tokenUtils;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //token拦截器
-        String token = request.getHeader("token");
+        //token放置在Authorization中
+        String token = request.getHeader("Authorization");
         // 如果不是映射到方法直接通过
         if(!(handler instanceof HandlerMethod)){
             return true;
@@ -42,6 +48,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             //没有token，重新获取
             throw new ServiceException(Constants.CODE_401, "无token，请重新登录");
         }
+        try {
+            tokenUtils.verifyToken(token);
+        } catch (JWTVerificationException e) {
+            throw new ServiceException(Constants.CODE_401, "token验证失败，请重新登录");
+        }
         //获取token中的userid
         String userId;
         String userRole;
@@ -49,26 +60,20 @@ public class JwtInterceptor implements HandlerInterceptor {
             userId = JWT.decode(token).getAudience().get(0);
             userRole = JWT.decode(token).getClaims().get("role").asString();
         } catch (JWTDecodeException j) {
-            throw new ServiceException(Constants.CODE_401, "token验证失败，请重新登录");
+            throw new ServiceException(Constants.CODE_401, "token解析失败，请重新登录");
         }
 
-        Account account = null;
         // 根据token中的userid和role查询数据库
-        if(userRole.indexOf("admin") >= 0 || userRole.indexOf("assistant") >= 0 || userRole.indexOf("teacher") >= 0) {
-            account = loginDao.getTeacherByID(Integer.parseInt(userId));
-        } else if (userRole.indexOf("student") >= 0) {
-            account = loginDao.getStudentByID(Integer.parseInt(userId));
-        }
-        if (account == null) {
+        if(userRole.equals("admin") || userRole.equals("assistant") || userRole.equals("teacher")) {
+            Account account = accountDao.getAdminByID(Integer.parseInt(userId));
+            if (account == null)
+                throw new ServiceException(Constants.CODE_401, "用户不存在，请重新登录");
+        } else if (userRole.equals("student")) {
+            Account account = accountDao.getStudentByID(Integer.parseInt(userId));
+            if (account == null)
+                throw new ServiceException(Constants.CODE_401, "用户不存在，请重新登录");
+        }else{
             throw new ServiceException(Constants.CODE_401, "用户不存在，请重新登录");
-        }
-        //用户密码加签验证token
-        JWTVerifier jwtVerifier =  JWT.require(Algorithm.HMAC256(account.getPassword())).build();
-
-        try {
-            jwtVerifier.verify(token); // 验证token
-        } catch (JWTVerificationException e) {
-            throw new ServiceException(Constants.CODE_401, "token验证失败，请重新登录");
         }
         return true;
     }

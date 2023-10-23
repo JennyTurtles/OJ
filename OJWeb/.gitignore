@@ -61,6 +61,6 @@ Thumbs.db
 .mvn/
 mvnw.cmd
 mvnw
-
+./src/main/resources/
 # Files or folders need to be retained
 # ...

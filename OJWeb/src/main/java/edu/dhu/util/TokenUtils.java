@@ -3,6 +3,7 @@ package edu.dhu.util;
 import cn.hutool.core.date.DateUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,5 +24,11 @@ public class TokenUtils {
                 .sign(algorithm);
     }
 
+    public DecodedJWT verifyToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+        return JWT.require(algorithm)
+                .build()
+                .verify(token);
+    }
 
 }

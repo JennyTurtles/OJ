@@ -14,4 +14,9 @@ public class LoginInf {
     private String role;
     private String token;
     private String name;
+
+    public LoginInf(String name, String role) {
+        this.name = name;
+        this.role = role;
+    }
 }

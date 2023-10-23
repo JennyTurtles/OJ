@@ -22,19 +22,17 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
                 .excludePathPatterns("/login/student","/login/admin","/login","/static/**"); //放行登录和静态资源
     }
 
-    @Override
-    protected void addViewControllers(ViewControllerRegistry registry) {
-        // TODO Auto-generated method stub
-        // 注册访问 /login 转向 page-login.html 页面
-        registry.addViewController("/login").setViewName("page-login.html");
-        super.addViewControllers(registry);
-    }
-
-    @Override
-    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // TODO Auto-generated method stub
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
-        super.addResourceHandlers(registry);
-    }
+//    @Override
+//    protected void addViewControllers(ViewControllerRegistry registry) {
+//        // 注册访问 /login 转向 page-login.html 页面
+//        registry.addViewController("/login").setViewName("page-login.html");
+//        super.addViewControllers(registry);
+//    }
+//
+//    @Override
+//    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+//        super.addResourceHandlers(registry);
+//    }
 }
 

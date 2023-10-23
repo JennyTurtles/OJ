@@ -14,9 +14,4 @@ public interface LoginDao {
     @Select("select * from adminusers where username = #{username}")
     public Account loginAdmin(LoginInf loginInf);
 
-    @Select("select * from users where ID = #{ID}")
-    public Account getStudentByID(Integer ID);
-
-    @Select("select * from adminusers where ID = #{ID}")
-    public Account getTeacherByID(Integer ID);
 }
