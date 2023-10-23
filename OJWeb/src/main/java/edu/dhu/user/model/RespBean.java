@@ -3,7 +3,7 @@ package edu.dhu.user.model;
 import lombok.Data;
 
 @Data
-public class RespBean extends Throwable {
+public class RespBean {
     private Integer code;
     private String message;
     private Object data;
