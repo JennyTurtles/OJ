@@ -1,4 +1,4 @@
-package edu.dhu.exception;
+package edu.dhu.global.exception;
 
 public interface Constants {
 

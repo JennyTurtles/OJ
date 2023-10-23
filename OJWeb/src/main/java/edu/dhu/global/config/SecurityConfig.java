@@ -1,4 +1,4 @@
-package edu.dhu.config;
+package edu.dhu.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

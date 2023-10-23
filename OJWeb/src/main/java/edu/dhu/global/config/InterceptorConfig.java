@@ -1,11 +1,9 @@
-package edu.dhu.config;
+package edu.dhu.global.config;
 
-import edu.dhu.config.interceptor.JwtInterceptor;
+import edu.dhu.global.config.interceptor.JwtInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import javax.annotation.Resource;

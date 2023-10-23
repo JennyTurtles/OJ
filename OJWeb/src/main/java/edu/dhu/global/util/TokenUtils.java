@@ -1,4 +1,4 @@
-package edu.dhu.util;
+package edu.dhu.global.util;
 
 import cn.hutool.core.date.DateUtil;
 import com.auth0.jwt.JWT;

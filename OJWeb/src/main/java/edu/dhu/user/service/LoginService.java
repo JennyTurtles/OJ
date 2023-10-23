@@ -3,7 +3,7 @@ package edu.dhu.user.service;
 import edu.dhu.user.model.Account;
 import edu.dhu.user.dao.LoginDao;
 import edu.dhu.user.model.LoginInf;
-import edu.dhu.util.TokenUtils;
+import edu.dhu.global.util.TokenUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

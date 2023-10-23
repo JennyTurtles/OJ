@@ -1,4 +1,4 @@
-package edu.dhu.util;
+package edu.dhu.global.util;
 
 import javax.servlet.http.HttpServletRequest;
 

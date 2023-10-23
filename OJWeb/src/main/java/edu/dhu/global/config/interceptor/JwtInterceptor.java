@@ -1,4 +1,4 @@
-package edu.dhu.config.interceptor;
+package edu.dhu.global.config.interceptor;
 
 import cn.hutool.core.util.StrUtil;
 import com.auth0.jwt.JWT;
@@ -6,9 +6,9 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import edu.dhu.user.dao.AccountDao;
 import edu.dhu.user.model.Account;
-import edu.dhu.exception.Constants;
-import edu.dhu.exception.ServiceException;
-import edu.dhu.util.TokenUtils;
+import edu.dhu.global.exception.Constants;
+import edu.dhu.global.exception.ServiceException;
+import edu.dhu.global.util.TokenUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

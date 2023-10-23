@@ -2,7 +2,7 @@ package edu.dhu.user.controller;
 
 import edu.dhu.user.model.LoginInf;
 import edu.dhu.user.model.RespBean;
-import edu.dhu.util.TokenUtils;
+import edu.dhu.global.util.TokenUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
