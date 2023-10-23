@@ -1,9 +1,8 @@
-package edu.dhu.service;
+package edu.dhu.user.service;
 
-import cn.hutool.core.bean.BeanUtil;
-import edu.dhu.model.Account;
-import edu.dhu.dao.LoginDao;
-import edu.dhu.model.LoginInf;
+import edu.dhu.user.model.Account;
+import edu.dhu.user.dao.LoginDao;
+import edu.dhu.user.model.LoginInf;
 import edu.dhu.util.TokenUtils;
 import org.springframework.stereotype.Service;
 

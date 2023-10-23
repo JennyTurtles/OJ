@@ -1,9 +1,8 @@
-package edu.dhu.controller;
+package edu.dhu.user.controller;
 
-import edu.dhu.model.LoginInf;
-import edu.dhu.model.RespBean;
-import edu.dhu.service.LoginService;
-import org.springframework.stereotype.Controller;
+import edu.dhu.user.model.LoginInf;
+import edu.dhu.user.model.RespBean;
+import edu.dhu.user.service.LoginService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

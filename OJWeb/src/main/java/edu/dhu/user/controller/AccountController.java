@@ -1,11 +1,9 @@
-package edu.dhu.controller;
+package edu.dhu.user.controller;
 
 import com.auth0.jwt.JWT;
-import edu.dhu.dao.AccountDao;
-import edu.dhu.model.Account;
-import edu.dhu.model.LoginInf;
-import edu.dhu.model.RespBean;
-import edu.dhu.util.TokenUtils;
+import edu.dhu.user.dao.AccountDao;
+import edu.dhu.user.model.LoginInf;
+import edu.dhu.user.model.RespBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

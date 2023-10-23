@@ -1,4 +1,4 @@
-package edu.dhu.model;
+package edu.dhu.user.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
-package edu.dhu.dao;
+package edu.dhu.user.dao;
 
-import edu.dhu.model.Account;
+import edu.dhu.user.model.Account;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
