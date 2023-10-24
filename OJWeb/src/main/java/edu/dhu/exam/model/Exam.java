@@ -1,11 +1,15 @@
 package edu.dhu.exam.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Exam implements java.io.Serializable {
 
 	private static final long serialVersionUID = 6817642372609057372L;

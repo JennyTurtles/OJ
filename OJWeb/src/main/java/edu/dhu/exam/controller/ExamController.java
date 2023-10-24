@@ -1,14 +1,15 @@
 package edu.dhu.exam.controller;
 
 import edu.dhu.exam.model.Exam;
+import edu.dhu.exam.model.PMExam;
 import edu.dhu.exam.service.ExamService;
+import edu.dhu.global.util.DecodeToken;
 import edu.dhu.user.model.RespBean;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/exam")
@@ -22,5 +23,13 @@ public class ExamController {
             return RespBean.ok("获取考试结束时间成功！",new Exam(res));
         else
             return RespBean.error("考试ID不存在！");
+    }
+
+    @PostMapping("/examList")
+    public RespBean getExamList(@RequestBody PMExam pMExam, HttpServletRequest request) {
+        DecodeToken decodeToken = new DecodeToken(request);
+        String userId = decodeToken.getUserId();
+        pMExam.setStudentId(Integer.parseInt(userId));
+        return RespBean.ok("获取考试列表成功！",examService.dataGrid2(pMExam));
     }
 }

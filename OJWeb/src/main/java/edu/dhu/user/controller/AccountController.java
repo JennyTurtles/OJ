@@ -1,6 +1,7 @@
 package edu.dhu.user.controller;
 
 import com.auth0.jwt.JWT;
+import edu.dhu.global.util.DecodeToken;
 import edu.dhu.user.dao.AccountDao;
 import edu.dhu.user.model.LoginInf;
 import edu.dhu.user.model.RespBean;
@@ -22,8 +23,9 @@ public class AccountController {
     @GetMapping("")
     public RespBean getAccount(HttpServletRequest request) {
         // 此处已经经过拦截器，token一定是合法的，无因此需异常处理
-        String userId = JWT.decode(request.getHeader("Authorization")).getAudience().get(0);
-        String userRole = JWT.decode(request.getHeader("Authorization")).getClaims().get("role").asString();
+        DecodeToken decodeToken = new DecodeToken(request);
+        String userId = decodeToken.getUserId();
+        String userRole = decodeToken.getRole();
         if (userRole.equals("student"))
             return RespBean.ok("查询成功", new LoginInf(accountDao.getStudentNameByID(Integer.parseInt(userId)),userRole));
         else
