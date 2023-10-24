@@ -27,7 +27,7 @@ public class LoginService {
         if (account == null)
             return null; // 用户名不存在
         if(check(loginInf.getPassword(),account.getPassword())){
-            String token = TokenUtils.genToken(account.getID().toString(),null);
+            String token = TokenUtils.genToken(account.getID().toString(),account.getRole());
             loginInf.setToken(token);
             loginInf.setName(account.getName());
             loginInf.setRole(account.getRole());
