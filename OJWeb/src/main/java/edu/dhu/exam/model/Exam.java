@@ -25,7 +25,7 @@ public class Exam implements java.io.Serializable {
 	private String name;
 	private Date starttime;
 	private Date endtime;
-	private String leftTime;
+	private Long leftTime;
 	private String description;
 	private Integer problemNum;
 	private boolean canGetHint;
@@ -51,7 +51,7 @@ public class Exam implements java.io.Serializable {
 	public Exam() {
 	}
 	public Exam(Long endTimestamp) {
-		this.leftTime = String.valueOf(endTimestamp);
+		this.leftTime = endTimestamp;
 	}
 	/** minimal constructor */
 	public Exam(String name, Integer problemNum, Integer teacherId) {
