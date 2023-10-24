@@ -23,10 +23,7 @@ import java.util.Map;
 public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	@Resource
 	private SessionFactory sessionFactory;
-	@Autowired
-	PlatformTransactionManager platformTransactionManager;
-
-
+	
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
