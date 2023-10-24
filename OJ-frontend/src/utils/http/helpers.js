@@ -1,10 +1,11 @@
 import { useUserStore } from '@/store'
 
-export function addBaseParams(params) {
-  if (!params.userId) {
-    params.userId = useUserStore().userId
-  }
-}
+// TODO: delete
+// export function addBaseParams(params) {
+//   if (!params.userId) {
+//     params.userId = useUserStore().userId
+//   }
+// }
 
 export function resolveResError(code, message) {
   switch (code) {

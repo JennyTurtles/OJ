@@ -9,7 +9,7 @@
       <SvgIcon v-if="showCloseIcon" icon="close" color="white" class="absolute right-0 top-0 cursor-pointer" @click="$emit('close')"/>  
       <h5 f-c-c text-24 font-normal color="#6a6a6a" mb-30>
         <img src="@/assets/images/logo.png" height="50" class="mr-10" />
-        {{ title }}
+        {{ props.title }}
       </h5>
 
     
@@ -71,8 +71,13 @@
 import { lStorage, setToken } from '@/utils'
 import { useStorage } from '@vueuse/core'
 import { addDynamicRoutes } from '@/router'
+import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps({
+  title: {
+    type: String, 
+    default: '东华大学 OJ系统'
+  },
   successPath: {
     type: String, 
     default: ''
@@ -90,7 +95,6 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])  
 
-const title = import.meta.env.VITE_TITLE
 
 const router = useRouter()
 const { query } = useRoute()
@@ -147,7 +151,7 @@ async function handleLogin() {
     try {
       loading.value = true
       $message.loading('正在验证...')
-      const res = await props.login({ name, password: password.toString() })
+      const res = await props.login({ username: name, password: password.toString() })
       console.log(res);
       $message.success('登录成功')
       setToken(res.data.token)
@@ -160,7 +164,11 @@ async function handleLogin() {
         router.push({ path, query })
       } else {
         if(props.successPath){
-          router.push(props.successPath)
+          console.log(props.successPath);
+          console.log(router.getRoutes());
+          console.log(router.hasRoute('AdminIndex'));
+          // console.log(':', useRouter().getRoutes);
+          router.push({path: props.successPath})
         }
       }
     } catch (error) {

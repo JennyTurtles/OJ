@@ -25,7 +25,7 @@ export default defineConfig(({ command, mode }) => {
     server: {
       host: '0.0.0.0',
       port: VITE_PORT,
-      open: false,
+      open: true,
       proxy: VITE_USE_PROXY
         ? {
             [VITE_BASE_API]: PROXY_CONFIG[VITE_BASE_API],
@@ -33,6 +33,7 @@ export default defineConfig(({ command, mode }) => {
           }
         : undefined,
     },
+
     build: {
       target: 'es2015',
       outDir: OUTPUT_DIR || 'dist',

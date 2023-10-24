@@ -117,3 +117,7 @@ export function isExternal(path) {
 export const isServer = typeof window === 'undefined'
 
 export const isClient = !isServer
+
+export function isAdminEnd() {
+  return !!history.state.current?.startsWith('/admin')
+}

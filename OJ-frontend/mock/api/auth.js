@@ -7,16 +7,17 @@ const token = {
 
 export default [
   {
-    url: '/api/auth/login',
+    url: '/api/login/student',
     method: 'post',
     response: ({ body }) => {
-      if (['student'].includes(body?.name)) {
+      if (['student'].includes(body?.username)) {
         return {
           code: 0,
           data: {
-            token: token[body.name],
+            token: token[body.username],
             name: '学生用户',
-            role: [body.name],
+            role: body.username,
+            username: body.username,
           },
         }
       } else {
@@ -28,16 +29,17 @@ export default [
     },
   },
   {
-    url: '/api/auth/loginAdmin',
+    url: '/api/login/admin',
     method: 'post',
     response: ({ body }) => {
-      if (['admin'].includes(body?.name)) {
+      if (['admin'].includes(body?.username)) {
         return {
           code: 0,
           data: {
-            token: token[body.name],
+            token: token[body.username],
             name: '管理员',
-            role: [body.name],
+            role: body.username,
+            username: body.username,
           },
         }
       } else {

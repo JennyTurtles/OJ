@@ -1,33 +1,25 @@
-import { resolveToken } from '../utils'
-
 const users = {
   admin123: {
     id: 1,
-    name: '大脸怪(admin)',
+    username: 'admin',
+    name: '老师(admin)',
     avatar: 'https://assets.qszone.com/images/avatar.jpg',
-    email: 'Ronnie@123.com',
-    role: ['admin'],
+    role: 'admin',
   },
   student123: {
     id: 2,
-    name: '大脸怪(editor)',
+    username: 'student',
+    name: '学生(student)',
     avatar: 'https://assets.qszone.com/images/avatar.jpg',
-    email: 'Ronnie@123.com',
-    role: ['student'],
-  },
-  guest: {
-    id: 3,
-    name: '访客(guest)',
-    avatar: 'https://assets.qszone.com/images/avatar.jpg',
-    role: [],
+    role: 'student',
   },
 }
 export default [
   {
-    url: '/api/user',
+    url: '/api/account',
     method: 'get',
     response: ({ headers }) => {
-      const token = resolveToken(headers?.authorization)
+      const token = headers?.authorization
       console.log(token)
       return {
         code: 0,

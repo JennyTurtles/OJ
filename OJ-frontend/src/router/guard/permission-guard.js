@@ -4,11 +4,11 @@ import { getToken, refreshAccessToken, isNullOrWhitespace } from '@/utils'
 const WHITE_LIST = [
   '/user',
   '/user/index',
+  '/user/login',
   '/user/faq',
   '/user/signup',
-  '/login',
   '/404',
-  '/admin-login',
+  '/admin/login',
 ]
 export function createPermissionGuard(router) {
   router.beforeEach(async (to) => {
@@ -23,7 +23,7 @@ export function createPermissionGuard(router) {
     /** 有token的情况 */
     if (to.path === '/login') return { name: 'User' }
 
-    refreshAccessToken()
+    // refreshAccessToken() //TODO: 待添加该功能
     return true
   })
 }

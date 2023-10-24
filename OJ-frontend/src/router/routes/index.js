@@ -1,5 +1,10 @@
 export const basicRoutes = [
   {
+    name: 'Index',
+    path: '/',
+    redirect: '/user/index',
+  },
+  {
     name: '404',
     path: '/404',
     component: () => import('@/views/error-page/404.vue'),
@@ -7,17 +12,17 @@ export const basicRoutes = [
   },
   {
     name: 'UserLogin',
-    path: '/login',
-    component: () => import('@/views/login/user-login.vue'),
+    path: '/user/login',
+    component: () => import('@/views/user/login/index.vue'),
     isHidden: true,
     meta: {
-      title: '登录页',
+      title: '学生登录页',
     },
   },
   {
     name: 'AdminLogin',
-    path: '/admin-login',
-    component: () => import('@/views/login/admin-login.vue'),
+    path: '/admin/login',
+    component: () => import('@/views/admin/login/index.vue'),
     isHidden: true,
     meta: {
       title: '管理员登录页',
@@ -72,6 +77,18 @@ export const EMPTY_ROUTE = {
   name: 'Empty',
   path: '/:pathMatch(.*)*',
   component: null,
+}
+
+export const ADMIN_UNAUTH_ROUTE = {
+  name: 'AdminUnauth',
+  path: '/:pathMatch(.*)*',
+  redirect: '/admin/login',
+}
+
+export const USER_UNAUTH_ROUTE = {
+  name: 'UserUnauth',
+  path: '/:pathMatch(.*)*',
+  component: '/user/login',
 }
 
 const modules = import.meta.glob('@/views/**/route.js', { eager: true })

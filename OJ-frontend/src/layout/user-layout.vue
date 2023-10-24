@@ -36,7 +36,7 @@
           </div>
           <div class="f-c-c gap-x-10" v-else>
             
-            <n-button type="default" color="#fff" ghost @click="showModal = true">
+            <n-button type="default" color="#fff" ghost @click="userStore.openLoginModal">
               登录
             </n-button>
             <n-button type="default" color="#fff" ghost @click="$router.push({name:'Signup'})">
@@ -53,7 +53,7 @@
       <section flex-1 min-h-300 overflow-hidden flex-col items-center bg-hex-f5f6fb dark:bg-hex-101014>
         <!-- 登录Modal -->
         <n-modal
-          v-model:show="showModal"
+          v-model:show="userStore.showLoginModal"
           class="custom-card"
           :style="bodyStyle"
           title="卡片预设"
@@ -62,13 +62,14 @@
           :segmented="segmented"
         >
          
-        <LoginForm :login="api.login" @close="showModal=false"/>
+        <LoginForm :login="api.login" @close="userStore.closeLoginModal"  :title="isAdminEnd()?'OJ系统 - 管理端':'OJ系统 - 登录'"/>
          
         </n-modal>
         <router-view v-slot="{ Component, route }">
-          <KeepAlive :include="keepAliveNames">
+          <!-- TODO: keepAlive的处理 -->
+          <!-- <KeepAlive :include="keepAliveNames"> -->
             <component :is="Component"  :key="route.fullPath" />
-          </KeepAlive>
+          <!-- </KeepAlive> -->
         </router-view>
       </section>
   </div>
@@ -82,6 +83,7 @@ import { useRouter } from 'vue-router';
 import LoginForm from '../components/LoginForm.vue';
 import UserAvatar from './components/header/components/UserAvatar.vue';
 import api from '@/api/user';
+import { getToken, isAdminEnd, isNullOrWhitespace } from '../utils';
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -112,6 +114,13 @@ const handleSelect = (path)=>{
   }
 }
 
-const showModal=ref(false)
+
+onMounted(() => {
+  const token = getToken()
+  if(isNullOrWhitespace(token)){
+    userStore.openLoginModal()
+  }
+  console.log('remember to open modal');
+})
 
 </script>

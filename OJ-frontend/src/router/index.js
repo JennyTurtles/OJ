@@ -1,8 +1,16 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 import { setupRouterGuard } from './guard'
-import { basicRoutes, EMPTY_ROUTE, NOT_FOUND_ROUTE } from './routes'
-import { getToken, isNullOrWhitespace } from '@/utils'
+import {
+  ADMIN_UNAUTH_ROUTE,
+  basicRoutes,
+  EMPTY_ROUTE,
+  NOT_FOUND_ROUTE,
+  USER_UNAUTH_ROUTE,
+} from './routes'
+import { getToken, isAdminEnd, isNullOrWhitespace } from '@/utils'
 import { useUserStore, usePermissionStore } from '@/store'
+import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 const isHash = import.meta.env.VITE_USE_HASH === 'true'
 export const router = createRouter({
@@ -32,27 +40,32 @@ export async function addDynamicRoutes() {
 
   // 没有token情况
   if (isNullOrWhitespace(token)) {
-    // router.addRoute(EMPTY_ROUTE)
     const permissionStore = usePermissionStore()
     const accessRoutes = permissionStore.generateRoutes()
+
     accessRoutes.forEach((route) => {
       !router.hasRoute(route.name) && router.addRoute(route)
     })
-    router.hasRoute(EMPTY_ROUTE.name) && router.removeRoute(EMPTY_ROUTE.name)
-    router.addRoute(NOT_FOUND_ROUTE)
+
+    if (isAdminEnd()) {
+      router.addRoute(ADMIN_UNAUTH_ROUTE)
+    } else {
+      router.addRoute(USER_UNAUTH_ROUTE)
+    }
     return
   }
 
   // 有token的情况
-
   try {
     const userStore = useUserStore()
     const permissionStore = usePermissionStore()
     !userStore.name && (await userStore.getUserInfo())
     const accessRoutes = permissionStore.generateRoutes(userStore.role)
+
     accessRoutes.forEach((route) => {
-      !router.hasRoute(route.name) && router.addRoute(route)
+      router.addRoute(route)
     })
+
     router.hasRoute(EMPTY_ROUTE.name) && router.removeRoute(EMPTY_ROUTE.name)
     router.addRoute(NOT_FOUND_ROUTE)
   } catch (error) {

@@ -143,24 +143,24 @@ export default [
     response: (data = {}) => {
       const { pageNum, pageSize } = data.query
       console.log(data.query)
-      let pageData = []
-      let total = examList.length
-      const filterData = examList
-      if (filterData.length) {
-        if (pageSize) {
-          while (pageData.length < pageSize) {
-            pageData.push(filterData[Math.round(Math.random() * (filterData.length - 1))])
-          }
-        } else {
-          pageData = filterData
-        }
-        pageData = pageData.map((item, index) => ({
-          id: pageSize * (pageNum - 1) + index + 1,
-          ...item,
-        }))
-      } else {
-        total = 0
-      }
+      let pageData = examList.slice(0, 3)
+      // let total = examList.length
+      // const filterData = examList
+      // if (filterData.length) {
+      //   if (pageSize) {
+      //     while (pageData.length < pageSize) {
+      //       pageData.push(filterData[Math.round(Math.random() * (filterData.length - 1))])
+      //     }
+      //   } else {
+      //     pageData = filterData
+      //   }
+      //   pageData = pageData.map((item, index) => ({
+      //     id: pageSize * (pageNum - 1) + index + 1,
+      //     ...item,
+      //   }))
+      // } else {
+      //   total = 0
+      // }
       return {
         code: 0,
         message: 'ok',
@@ -168,7 +168,37 @@ export default [
           list: pageData,
           pageNum,
           pageSize,
-          total,
+          total: 3,
+        },
+      }
+    },
+  },
+  {
+    url: '/api/exam/take',
+    method: 'post',
+    response: ({ body }) => {
+      const { id } = body
+      if (!id)
+        return {
+          code: 400,
+          message: 'fail',
+        }
+      return {
+        code: 0,
+        message: 'ok',
+        data: {},
+      }
+    },
+  },
+  {
+    url: '/api/exam/sync_time',
+    method: 'get',
+    response: () => {
+      return {
+        code: 0,
+        message: 'ok',
+        data: {
+          leftTime: 6757,
         },
       }
     },

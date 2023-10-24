@@ -38,6 +38,30 @@ export default {
       },
     },
     {
+      name: 'Problemset',
+      path: 'problemset',
+      component: () => import('./problemset/index.vue'),
+      meta: {
+        title: '考试题目列表',
+        icon: 'ic:baseline-table-view',
+        role: ['student'],
+        requireAuth: true,
+        keepAlive: false,
+      },
+    },
+    {
+      name: 'Trainset',
+      path: 'trainset',
+      component: () => import('./trainset/index.vue'),
+      meta: {
+        title: '训练题目列表',
+        icon: 'ic:baseline-table-view',
+        role: ['student'],
+        requireAuth: true,
+        keepAlive: false,
+      },
+    },
+    {
       name: 'Class',
       path: 'class',
       component: () => import('./class/index.vue'),
@@ -66,7 +90,7 @@ export default {
       path: 'signup',
       component: () => import('./signup/index.vue'),
       meta: {
-        title: '登录',
+        title: '注册',
         icon: 'ic:baseline-table-view',
         role: [],
         requireAuth: false,

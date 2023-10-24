@@ -18,17 +18,50 @@
 
 <script setup>
 import {  ref, reactive, onMounted } from 'vue'
-import { NButton, useMessage } from "naive-ui";
-import api from '@/api';
+import { NButton, useMessage, useNotification } from "naive-ui";
+import api from '@/api/user';
 import ExamActions from './exam-actions.vue';
+import { getToken } from '@/utils';
+import { useUserStore } from '@/store';
+import { useRouter } from 'vue-router';
 
 
-const onStartExam = (row)=>{
-  console.log('exam');
+const userStore = useUserStore()
+const router = useRouter()
+
+
+
+const onStartExam = async (row)=>{
+  if(!getToken()){ // 如果没有登录
+    $notification.info({
+      title: '未登录', 
+      content: '必须登录才能参加！',
+    })
+    userStore.openLoginModal()
+    return 
+  }
   console.log(row);
+
+  const {status, id, type} = row
+  if(status == "考试进行中" || status == "考试已结束"){
+    try {
+      const res = await api.takeExam({id})
+      if(type == 'iTraining'){
+        router.push({name: 'Trainset', query:{examId: id}})
+      }else{
+        router.push({name: 'Problemset', query:{examId: id}})
+      }
+    } catch (err) {
+      console.log(res);
+    }
+    
+    
+  }
+
+  
 }
 
-const onCheckGrad = (row)=>{
+const onCheckGrade = (row)=>{
   console.log('grad');
   console.log(row);
 }
@@ -70,7 +103,7 @@ const columns = [
         ExamActions,
         {
           onClickStart: () => onStartExam(row),
-          onClickGrade: () => onCheckGrad(row)
+          onClickGrade: () => onCheckGrade(row)
         }
       );
     }

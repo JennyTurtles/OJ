@@ -8,13 +8,13 @@ export default {
   meta: {
     title: '示例页面',
     icon: 'uil:pagelines',
-    role: ['admin'],
-    requireAuth: true,
+    role: [],
+    requireAuth: false,
     order: 3,
   },
   children: [
     {
-      name: 'AdminHome',
+      name: 'AdminIndex',
       path: 'index',
       component: () => import('./home/index.vue'),
       meta: {
