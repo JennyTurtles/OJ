@@ -13,7 +13,7 @@ public class LoginController {
     @Resource
     LoginService loginService;
     @PostMapping("/student")
-    public RespBean loginStudent(LoginInf loginInf) {
+    public RespBean loginStudent(@RequestBody LoginInf loginInf) {
         LoginInf res = loginService.login(loginInf,"student");
         if (res == null) // 未找到用户则返回用户名不存在
             return RespBean.error("用户名不存在!");
@@ -27,7 +27,7 @@ public class LoginController {
     }
 
     @PostMapping("/admin")
-    public RespBean loginAdmin(LoginInf loginInf) {
+    public RespBean loginAdmin(@RequestBody LoginInf loginInf) {
         LoginInf res = loginService.login(loginInf,"admin");
         if (res == null) // 未找到用户则返回用户名不存在
             return RespBean.error("用户名不存在!");
