@@ -135,11 +135,12 @@ public class ExamService {
             dg.setTotal(totalLines);
             // 设置每页显示多少行
 //            dg.setPageLines(pMExam.getRows());
-            dg.setPageNum(pMExam.getRows());
+//            dg.setPageNum(pMExam.getRows());
+            dg.setPageSize(pMExam.getRows());
             // 设置总的页数,总页数 ＝ (总行数／每页显示多少行)向上取整
             dg.setTotalPages((long) (Math.ceil((double) dg.getTotal() / (double) dg.getPageNum())));
             // 设置当前显示第几页
-            dg.setCurrentPage(pMExam.getPage());
+            dg.setPageNum(pMExam.getPage());
             // 设置当前页的数据行数量
             dg.setCurrentPageLineNum(pMExamList.size());
             // 设置当前页的所有数据行

@@ -21,10 +21,11 @@ public class DataGrid implements java.io.Serializable {
 
 	// 每页显示多少行
 //	private long pageLines;
-	private long pageNum; // 原pageLines
 
-	// 当前显示第几页
-	private long currentPage;
+	// 每页显示的行数
+	private long pageSize;
+	// 当前所在页
+	private long pageNum;
 
 	// 当前页的数据行数量,只有在最后一页时会和每页显示多少行可能不同
 	@JsonIgnore
