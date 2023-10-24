@@ -26,7 +26,7 @@ public class ExamController {
             return RespBean.error("考试ID不存在！");
     }
 
-    @GetMapping("/examList")
+    @GetMapping("/student")
     @Transactional
     public RespBean getExamList(Integer pageNum,Integer pageSize, HttpServletRequest request) {
         PMExam pMExam = new PMExam();
@@ -35,6 +35,6 @@ public class ExamController {
         DecodeToken decodeToken = new DecodeToken(request);
         String userId = decodeToken.getUserId();
         pMExam.setStudentId(Integer.parseInt(userId));
-        return RespBean.ok("获取考试列表成功！",examService.dataGrid2(pMExam));
+        return RespBean.ok("获取考试列表成功！",examService.dataGrid(pMExam));
     }
 }

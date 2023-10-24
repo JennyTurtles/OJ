@@ -1,76 +1,39 @@
 package edu.dhu.exam.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class DataGrid implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1538274527426L;
 
 	// 总的记录行数
-	private long totalLines;
+//	private long totalLines;
+	private long total; // 原totalLines
 
 	// 总的页数
+	@JsonIgnore
 	private long totalPages;
 
 	// 每页显示多少行
-	private long pageLines;
+//	private long pageLines;
+	private long pageNum; // 原pageLines
 
 	// 当前显示第几页
 	private long currentPage;
 
 	// 当前页的数据行数量,只有在最后一页时会和每页显示多少行可能不同
+	@JsonIgnore
 	private long currentPageLineNum;
 
 	// 当前页的所有数据行
 	@SuppressWarnings("rawtypes")
-	private List<?> rows = new ArrayList();
+//	private List<?> rows = new ArrayList();
+	private List<?> list = new ArrayList(); // 原rows
 
-	public long getTotalLines() {
-		return totalLines;
-	}
 
-	public void setTotalLines(long totalLines) {
-		this.totalLines = totalLines;
-	}
-
-	public long getPageLines() {
-		return pageLines;
-	}
-
-	public void setPageLines(long pageLines) {
-		this.pageLines = pageLines;
-	}
-
-	public long getTotalPages() {
-		return totalPages;
-	}
-
-	public void setTotalPages(long totalPages) {
-		this.totalPages = totalPages;
-	}
-
-	public long getCurrentPage() {
-		return currentPage;
-	}
-
-	public void setCurrentPage(long currentPage) {
-		this.currentPage = currentPage;
-	}
-
-	public List<?> getRows() {
-		return rows;
-	}
-
-	public void setRows(List<?> rows) {
-		this.rows = rows;
-	}
-
-	public long getCurrentPageLineNum() {
-		return currentPageLineNum;
-	}
-
-	public void setCurrentPageLineNum(long currentPageLineNum) {
-		this.currentPageLineNum = currentPageLineNum;
-	}
 }

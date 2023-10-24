@@ -131,92 +131,95 @@ public class ExamService {
             }
 
             // 设置总的记录行数
-            dg.setTotalLines(totalLines);
+//            dg.setTotalLines(totalLines);
+            dg.setTotal(totalLines);
             // 设置每页显示多少行
-            dg.setPageLines(pMExam.getRows());
+//            dg.setPageLines(pMExam.getRows());
+            dg.setPageNum(pMExam.getRows());
             // 设置总的页数,总页数 ＝ (总行数／每页显示多少行)向上取整
-            dg.setTotalPages((long) (Math.ceil((double) dg.getTotalLines() / (double) dg.getPageLines())));
+            dg.setTotalPages((long) (Math.ceil((double) dg.getTotal() / (double) dg.getPageNum())));
             // 设置当前显示第几页
             dg.setCurrentPage(pMExam.getPage());
             // 设置当前页的数据行数量
             dg.setCurrentPageLineNum(pMExamList.size());
             // 设置当前页的所有数据行
-            dg.setRows(pMExamList);
+//            dg.setRows(pMExamList);
+            dg.setList(pMExamList);
             return dg;
         }
     }
 
-    @Transactional
-    public DataGrid dataGrid2(PMExam pMExam) {
-
-        DataGrid dg = new DataGrid();
-        long totalLines;
-        List<Exam> theExamList;
-        // 如果学生没有登录
-        if (pMExam.getStudentId() == null) {
-            // 查询所有的考试
-            // 获取总的行数
-            totalLines = examDaoNew.getAllExamsNum();
-            // 分页查找当前页的数据
-            int offset = (pMExam.getPage() - 1) * pMExam.getRows();
-            RowBounds rowBounds = new RowBounds(offset, pMExam.getRows());
-            theExamList = examDaoNew.getExamsByPage(rowBounds);
-        } else {
-            // 查询该学生所有符合条件的考试
-            // 获取总的行数
-            totalLines = examDaoNew.getAllExamsNumByStuId(pMExam.getStudentId());
-            // 分页查找当前页的数据
-            int offset = (pMExam.getPage() - 1) * pMExam.getRows();
-            RowBounds rowBounds = new RowBounds(offset, pMExam.getRows());
-            theExamList = examDaoNew.getExamsByPageAndStuId(pMExam.getStudentId(), rowBounds);
-        }
-
-        // 如果考试查询结果为空
-        if (theExamList == null) {
-            return null;
-        } else {
-            List<PMExam> pMExamList = new ArrayList<PMExam>();
-            // 将Exam List转换为PMExam List
-            changeModel(theExamList, pMExamList);
-
-            for (int i = 0; i < pMExamList.size(); i++) {
-                if(pMExamList.get(i).getType()!=null&&pMExamList.get(i).getType().equals("iTraining")){
-                    int catNumber = itrainProblemCatDaoNew.getExamCategoryCount(pMExamList.get(i).getId());
-                    pMExamList.get(i).setProblemNum(catNumber);
-                }
-                pMExamList.get(i).setPage(pMExam.getPage());
-                pMExamList.get(i).setRows(pMExam.getRows());
-
-                // 设置比赛状态
-                pMExamList.get(i).setStatus(
-                        compareTime(pMExamList.get(i).getStarttime(), pMExamList.get(i).getEndtime(), new java.util.Date()));
-
-                // 根据老师id查找并设置老师名字
-//                Adminusers teacher = adminusersDao.get(Adminusers.class, pMExamList.get(i).getTeacherId());
-                Adminusers teacher = adminusersDaoNew.get(pMExamList.get(i).getTeacherId());
-
-                if (teacher == null) {
-                    pMExamList.get(i).setTeacherName(" ");
-                } else {
-                    pMExamList.get(i).setTeacherName(teacher.getName());
-                }
-                //设置考试类别
-                pMExamList.get(i).setExamType(theExamList.get(i).getType());
-            }
-
-            // 设置总的记录行数
-            dg.setTotalLines(totalLines);
-            // 设置每页显示多少行
-            dg.setPageLines(pMExam.getRows());
-            // 设置总的页数,总页数 ＝ (总行数／每页显示多少行)向上取整
-            dg.setTotalPages((long) (Math.ceil((double) dg.getTotalLines() / (double) dg.getPageLines())));
-            // 设置当前显示第几页
-            dg.setCurrentPage(pMExam.getPage());
-            // 设置当前页的数据行数量
-            dg.setCurrentPageLineNum(pMExamList.size());
-            // 设置当前页的所有数据行
-            dg.setRows(pMExamList);
-            return dg;
-        }
-    }
+//    @Transactional
+//    public DataGrid dataGrid2(PMExam pMExam) {
+//
+//        DataGrid dg = new DataGrid();
+//        long totalLines;
+//        List<Exam> theExamList;
+//        // 如果学生没有登录
+//        if (pMExam.getStudentId() == null) {
+//            // 查询所有的考试
+//            // 获取总的行数
+//            totalLines = examDaoNew.getAllExamsNum();
+//            // 分页查找当前页的数据
+//            int offset = (pMExam.getPage() - 1) * pMExam.getRows();
+//            RowBounds rowBounds = new RowBounds(offset, pMExam.getRows());
+//            theExamList = examDaoNew.getExamsByPage(rowBounds);
+//        } else {
+//            // 查询该学生所有符合条件的考试
+//            // 获取总的行数
+//            totalLines = examDaoNew.getAllExamsNumByStuId(pMExam.getStudentId());
+//            // 分页查找当前页的数据
+//            int offset = (pMExam.getPage() - 1) * pMExam.getRows();
+//            RowBounds rowBounds = new RowBounds(offset, pMExam.getRows());
+//            theExamList = examDaoNew.getExamsByPageAndStuId(pMExam.getStudentId(), rowBounds);
+//        }
+//
+//        // 如果考试查询结果为空
+//        if (theExamList == null) {
+//            return null;
+//        } else {
+//            List<PMExam> pMExamList = new ArrayList<PMExam>();
+//            // 将Exam List转换为PMExam List
+//            changeModel(theExamList, pMExamList);
+//
+//            for (int i = 0; i < pMExamList.size(); i++) {
+//                if(pMExamList.get(i).getType()!=null&&pMExamList.get(i).getType().equals("iTraining")){
+//                    int catNumber = itrainProblemCatDaoNew.getExamCategoryCount(pMExamList.get(i).getId());
+//                    pMExamList.get(i).setProblemNum(catNumber);
+//                }
+//                pMExamList.get(i).setPage(pMExam.getPage());
+//                pMExamList.get(i).setRows(pMExam.getRows());
+//
+//                // 设置比赛状态
+//                pMExamList.get(i).setStatus(
+//                        compareTime(pMExamList.get(i).getStarttime(), pMExamList.get(i).getEndtime(), new java.util.Date()));
+//
+//                // 根据老师id查找并设置老师名字
+////                Adminusers teacher = adminusersDao.get(Adminusers.class, pMExamList.get(i).getTeacherId());
+//                Adminusers teacher = adminusersDaoNew.get(pMExamList.get(i).getTeacherId());
+//
+//                if (teacher == null) {
+//                    pMExamList.get(i).setTeacherName(" ");
+//                } else {
+//                    pMExamList.get(i).setTeacherName(teacher.getName());
+//                }
+//                //设置考试类别
+//                pMExamList.get(i).setExamType(theExamList.get(i).getType());
+//            }
+//
+//            // 设置总的记录行数
+//            dg.setTotalLines(totalLines);
+//            // 设置每页显示多少行
+//            dg.setPageLines(pMExam.getRows());
+//            // 设置总的页数,总页数 ＝ (总行数／每页显示多少行)向上取整
+//            dg.setTotalPages((long) (Math.ceil((double) dg.getTotalLines() / (double) dg.getPageLines())));
+//            // 设置当前显示第几页
+//            dg.setCurrentPage(pMExam.getPage());
+//            // 设置当前页的数据行数量
+//            dg.setCurrentPageLineNum(pMExamList.size());
+//            // 设置当前页的所有数据行
+//            dg.setRows(pMExamList);
+//            return dg;
+//        }
+//    }
 }

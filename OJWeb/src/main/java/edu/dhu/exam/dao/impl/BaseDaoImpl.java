@@ -19,9 +19,13 @@ import java.util.Map;
 
 @Repository("baseDao")
 @Component
+@Transactional
 public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	@Resource
 	private SessionFactory sessionFactory;
+	@Autowired
+	PlatformTransactionManager platformTransactionManager;
+
 
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
@@ -31,14 +35,7 @@ public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-//
-//	@Autowired
-//	public void setSessionFactory(EntityManagerFactory factory) {
-//		if (factory.unwrap(SessionFactory.class) == null) {
-//			throw new NullPointerException("factory is not a hibernate factory");
-//		}
-//		this.sessionFactory = factory.unwrap(SessionFactory.class);
-//	}
+
 	protected Session getCurrentSession() {
 		return this.sessionFactory.getCurrentSession();
 	}
@@ -191,12 +188,15 @@ public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	@Override
 	@Transactional
 	public Long count(String hql, Map<String, Object> params) {
+		this.getCurrentSession().beginTransaction();
+//		System.out.print(">>>>>事务管理器："+platformTransactionManager);
 		Query q = this.getCurrentSession().createQuery(hql);
 		if (params != null && !params.isEmpty()) {
 			for (String key : params.keySet()) {
 				q.setParameter(key, params.get(key));
 			}
 		}
+//		this.getCurrentSession().getTransaction().commit();
 		return (Long) q.uniqueResult();
 	}
 
