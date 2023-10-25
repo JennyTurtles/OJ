@@ -30,7 +30,7 @@ public class ExamController {
             return RespBean.error("考试ID不存在！");
     }
 
-    @GetMapping("/student")
+    @GetMapping("/examList")
     @Transactional
     public RespBean getExamList(Integer pageNum,Integer pageSize, HttpServletRequest request) {
         PMExam pMExam = new PMExam();
