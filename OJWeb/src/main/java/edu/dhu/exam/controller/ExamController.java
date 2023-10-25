@@ -9,7 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/exam")
@@ -19,8 +22,10 @@ public class ExamController {
     @GetMapping("sync_time")
     public RespBean syncTime(Integer examId) {
         Long res = examService.syncTime(examId);
+        Map<String, Long> map = new HashMap<>();
+        map.put("leftTime",res);
         if (res != null)
-            return RespBean.ok("获取考试结束时间成功！",new Exam(res));
+            return RespBean.ok("获取考试结束时间成功！",map);
         else
             return RespBean.error("考试ID不存在！");
     }
