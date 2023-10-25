@@ -4,8 +4,7 @@ import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.PMExam;
 import edu.dhu.exam.service.ExamService;
 import edu.dhu.global.util.DecodeToken;
-import edu.dhu.user.model.RespBean;
-import org.apache.ibatis.annotations.Select;
+import edu.dhu.global.model.RespBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 

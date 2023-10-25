@@ -9,6 +9,11 @@ import edu.dhu.user.model.Account;
 import edu.dhu.global.exception.Constants;
 import edu.dhu.global.exception.ServiceException;
 import edu.dhu.global.util.TokenUtils;
+import org.apache.cxf.security.SecurityContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,6 +27,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
@@ -33,14 +40,12 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //token放置在Authorization中
+        //token在Authorization中
         String token = request.getHeader("Authorization");
-        // 如果不是映射到方法直接通过
         if(!(handler instanceof HandlerMethod)){
             return true;
         }
         if(StrUtil.isBlank((token))){
-            //没有token，重新获取
             throw new ServiceException(Constants.CODE_401, "无token，请重新登录");
         }
         try {
@@ -48,7 +53,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         } catch (JWTVerificationException e) {
             throw new ServiceException(Constants.CODE_401, "token验证失败，请重新登录");
         }
-        //获取token中的userid
+        // 解析token，获取userId和userRole
         String userId;
         String userRole;
         try {
@@ -58,18 +63,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             throw new ServiceException(Constants.CODE_401, "token解析失败，请重新登录");
         }
 
-        // 根据token中的userid和role查询数据库
-        if(userRole.equals("admin") || userRole.equals("assistant") || userRole.equals("teacher")) {
-            Account account = accountDao.getAdminByID(Integer.parseInt(userId));
-            if (account == null)
-                throw new ServiceException(Constants.CODE_401, "用户不存在，请重新登录");
-        } else if (userRole.equals("student")) {
-            Account account = accountDao.getStudentByID(Integer.parseInt(userId));
-            if (account == null)
-                throw new ServiceException(Constants.CODE_401, "用户不存在，请重新登录");
-        }else{
-            throw new ServiceException(Constants.CODE_401, "用户不存在，请重新登录");
-        }
+        // 将权限信息放入SecurityContext中
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
+                null, new ArrayList<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority(userRole))));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
         return true;
     }
 }

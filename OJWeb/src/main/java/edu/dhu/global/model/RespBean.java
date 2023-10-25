@@ -1,4 +1,4 @@
-package edu.dhu.user.model;
+package edu.dhu.global.model;
 
 import lombok.Data;
 

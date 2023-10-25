@@ -1,15 +1,20 @@
 package edu.dhu.user.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 // 需要实现UserDetail接口以便让SpringSecurity进行认证
 @NoArgsConstructor
 @Data
+@Component
 public class Account implements UserDetails{
     Integer ID;
     String name;
@@ -37,7 +42,7 @@ public class Account implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return new ArrayList<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority(role)));
     }
 
     @Override

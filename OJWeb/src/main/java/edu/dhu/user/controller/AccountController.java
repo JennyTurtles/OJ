@@ -1,16 +1,17 @@
 package edu.dhu.user.controller;
 
-import com.auth0.jwt.JWT;
 import edu.dhu.global.util.DecodeToken;
 import edu.dhu.user.dao.AccountDao;
-import edu.dhu.user.model.LoginInf;
-import edu.dhu.user.model.RespBean;
+import edu.dhu.global.model.RespBean;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 
 // 增删改查个人信息
@@ -21,14 +22,19 @@ public class AccountController {
     private AccountDao accountDao;
 
     @GetMapping("")
+    @PreAuthorize("hasAnyAuthority('student','admin','teacher','assistant')")
     public RespBean getAccount(HttpServletRequest request) {
         // 此处已经经过拦截器，token一定是合法的，无因此需异常处理
         DecodeToken decodeToken = new DecodeToken(request);
         String userId = decodeToken.getUserId();
         String userRole = decodeToken.getRole();
+
+        Map<String,String> map = new HashMap<>();
+        map.put("role",userRole);
         if (userRole.equals("student"))
-            return RespBean.ok("查询成功", new LoginInf(accountDao.getStudentNameByID(Integer.parseInt(userId)),userRole));
+            map.put("name",accountDao.getStudentNameByID(Integer.parseInt(userId)));
         else
-            return RespBean.ok("查询成功", new LoginInf(accountDao.getAdminNameByID(Integer.parseInt(userId)),userRole));
+            map.put("name",accountDao.getAdminNameByID(Integer.parseInt(userId)));
+        return RespBean.ok("查询成功", map);
     }
 }
