@@ -513,45 +513,33 @@ public class UserController{
 		}
 	}
 
-//	public void findStudentByusername() {
-//		Json j = new Json();
-//		Users pmuser = userService.findStudentByusername(user.getUsername());
-//		if (pmuser != null) {
-//			pmuser.setAnswer(null);
-//			pmuser.setPassword(null);
-//			j.setSuccess(true);
-//			j.setMsg("查询学生信息成功");
-//			j.setObj(pmuser);
-//			logger.info("查询学生信息成功");
-//			super.writeJson(j);
-//		} else {
-//			j.setSuccess(false);
-//			j.setMsg("查询学生信息失败");
-//			logger.info("查询学生信息失败");
-//			super.writeJson(j);
-//		}
-//	}
+	@PostMapping("/findStudentByusername")
+	public RespBean findStudentByusername(@RequestBody PMUser user) {
+		Users pmuser = userService.findStudentByusername(user.getUsername());
+		if (pmuser != null) {
+			pmuser.setAnswer(null);
+			pmuser.setPassword(null);
+			return RespBean.ok("查询学生信息成功",pmuser);
+		} else {
+			return RespBean.error("查询学生信息失败");
+		}
+	}
 //
-//	public void confirmQuestionAnswer() {
-//		Json j = new Json();
-//		Users pmuser = userService.findStudentByusername(user.getUsername());
-//		if (pmuser != null) {
-//			if(pmuser.getAnswer().equals(user.getAnswer()) ){
-//				j.setSuccess(true);
-//				j.setMsg("问题答案正确");
-//				super.writeJson(j);
-//			}else{
-//				j.setSuccess(false);
-//				j.setMsg("问题答案错误");
-//				super.writeJson(j);
-//			}
-//		} else {
-//			j.setSuccess(false);
-//			j.setMsg("查询学生信息失败");
-//			logger.info("查询学生信息失败");
-//			super.writeJson(j);
-//		}
-//	}
+	@PostMapping("/confirmQuestionAnswer")
+	public RespBean confirmQuestionAnswer(@RequestBody PMUser user) {
+		Users pmuser = userService.findStudentByusername(user.getUsername());
+		if (pmuser != null) {
+			if (pmuser.getAnswer() == null)
+				return RespBean.error("该学生未提供答案");
+			if(pmuser.getAnswer().equals(user.getAnswer()) ){
+				return RespBean.ok("问题答案正确");
+			}else{
+				return RespBean.error("问题答案错误");
+			}
+		} else {
+			return RespBean.error("查询学生信息失败");
+		}
+	}
 //
 //	public void getUserByStudentNoClassId() {
 //		Json j = new Json();
@@ -663,21 +651,14 @@ public class UserController{
 //		}
 //	}
 //
-//	public void updatePasswordByUserName() {
-//		// 返回前台的json数据
-//		Json j = new Json();
-//		boolean result = userService.updatePasswordByUserName(user);
-//		if (result == true) {
-//			logger.info("重置密码成功");
-//			j.setSuccess(true);
-//			j.setMsg("重置密码成功");
-//			super.writeJson(j);
-//		} else {
-//			logger.info("重置密码失败");
-//			j.setSuccess(false);
-//			j.setMsg("重置密码失败");
-//			super.writeJson(j);
-//		}
-//	}
+	@PostMapping("/updatePasswordByUserName")
+	public RespBean updatePasswordByUserName(@RequestBody PMUser user) {
+		boolean result = userService.updatePasswordByUserName(user);
+		if (result) {
+			return RespBean.ok("重置密码成功");
+		} else {
+			return RespBean.error("重置密码失败");
+		}
+	}
 
 }
