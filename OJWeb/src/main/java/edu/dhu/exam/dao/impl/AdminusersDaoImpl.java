@@ -1,10 +1,9 @@
 package edu.dhu.exam.dao.impl;
 
 import edu.dhu.exam.dao.AdminusersDaoI;
-import edu.dhu.exam.model.Adminusers;
-import edu.dhu.exam.model.PMAdminusers;
+import edu.dhu.user.model.Adminusers;
+import edu.dhu.user.model.PMAdminusers;
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,46 +13,6 @@ import java.util.List;
 public class AdminusersDaoImpl extends BaseDaoImpl<Adminusers> implements
 		AdminusersDaoI {
 
-//	private AssistantClassDaoI assistantClassDao;
-//	private ProblemsDaoI problemsDao;
-//	private ClassesDaoI classesDao;
-//	private SchoolDaoI schoolDao;
-//
-//	public SchoolDaoI getSchoolDao() {
-//		return schoolDao;
-//	}
-//
-//	@Autowired
-//	public void setSchoolDao(SchoolDaoI schoolDao) {
-//		this.schoolDao = schoolDao;
-//	}
-//
-//	@Autowired
-//	public void setClassesDao(ClassesDaoI classesDao) {
-//		this.classesDao = classesDao;
-//	}
-//
-//	public ClassesDaoI getClassesDao() {
-//		return classesDao;
-//	}
-//
-//	public ProblemsDaoI getProblemsDao() {
-//		return problemsDao;
-//	}
-//
-//	@Autowired
-//	public void setProblemsDao(ProblemsDaoI problemsDao) {
-//		this.problemsDao = problemsDao;
-//	}
-//
-//	@Autowired
-//	public void setAssistantClassDao(AssistantClassDaoI assistantClassDao) {
-//		this.assistantClassDao = assistantClassDao;
-//	}
-//
-//	public AssistantClassDaoI getAssistantClassDao() {
-//		return assistantClassDao;
-//	}
 
 	@Override
 	public List<PMAdminusers> findAllAdminusers() {

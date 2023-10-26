@@ -1,4 +1,4 @@
-package edu.dhu.global.util;
+package edu.dhu.global.model;
 
 import com.auth0.jwt.JWT;
 import lombok.Data;

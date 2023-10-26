@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import edu.dhu.user.dao.AccountDao;
 import edu.dhu.user.model.Account;
 import edu.dhu.global.exception.Constants;
 import edu.dhu.global.exception.ServiceException;
@@ -17,12 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-//import org.sys.rate.model.Admin;
-//import org.sys.rate.model.Student;
-//import org.sys.rate.model.Teacher;
-//import org.sys.rate.service.admin.AdminService;
-//import org.sys.rate.service.admin.StudentService;
-//import org.sys.rate.service.admin.TeacherService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +26,6 @@ import java.util.Arrays;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
-    @Resource
-    private AccountDao accountDao;
     @Resource
     private TokenUtils tokenUtils;
 

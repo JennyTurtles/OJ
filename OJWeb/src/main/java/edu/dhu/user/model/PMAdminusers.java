@@ -1,4 +1,4 @@
-package edu.dhu.exam.model;
+package edu.dhu.user.model;
 
 public class PMAdminusers implements java.io.Serializable {
 

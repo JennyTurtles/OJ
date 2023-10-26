@@ -1,8 +1,8 @@
 package edu.dhu.exam.dao;
 
 
-import edu.dhu.exam.model.Adminusers;
-import edu.dhu.exam.model.PMAdminusers;
+import edu.dhu.user.model.Adminusers;
+import edu.dhu.user.model.PMAdminusers;
 
 import java.util.List;
 

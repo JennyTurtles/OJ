@@ -5,6 +5,8 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import edu.dhu.global.model.RespBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -27,4 +29,8 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(AuthenticationException.class)
+    public RespBean serviceException(AuthenticationException e) {
+        return RespBean.error(e.getMessage());
+    }
 }

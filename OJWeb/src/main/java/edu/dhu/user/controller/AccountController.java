@@ -1,6 +1,6 @@
 package edu.dhu.user.controller;
 
-import edu.dhu.global.util.DecodeToken;
+import edu.dhu.global.model.DecodeToken;
 import edu.dhu.user.dao.AccountDao;
 import edu.dhu.global.model.RespBean;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,11 +27,11 @@ public class AccountController {
         // 此处已经经过拦截器，token一定是合法的，无因此需异常处理
         DecodeToken decodeToken = new DecodeToken(request);
         String userId = decodeToken.getUserId();
-        String userRole = decodeToken.getRole();
+        String role = decodeToken.getRole();
 
         Map<String,String> map = new HashMap<>();
-        map.put("role",userRole);
-        if (userRole.equals("student"))
+        map.put("role",role);
+        if (role.equals("student"))
             map.put("name",accountDao.getStudentNameByID(Integer.parseInt(userId)));
         else
             map.put("name",accountDao.getAdminNameByID(Integer.parseInt(userId)));

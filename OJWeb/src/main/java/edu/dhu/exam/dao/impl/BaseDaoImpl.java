@@ -19,7 +19,6 @@ import java.util.Map;
 
 @Repository("baseDao")
 @Component
-@Transactional
 public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	@Resource
 	private SessionFactory sessionFactory;
@@ -34,7 +33,7 @@ public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	}
 
 	protected Session getCurrentSession() {
-		return this.sessionFactory.getCurrentSession();
+        return this.sessionFactory.getCurrentSession();
 	}
 
 	/*
@@ -42,7 +41,10 @@ public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	 */
 	@Override
 	public Serializable save(T o) {
-		return this.getCurrentSession().save(o);
+//		this.getCurrentSession().beginTransaction();
+		Serializable res = this.getCurrentSession().save(o);
+//		this.getCurrentSession().getTransaction().commit();
+		return res;
 	}
 
 	/*
@@ -121,6 +123,7 @@ public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> find(String hql) {
+//		this.getCurrentSession().beginTransaction();
 		Query q = this.getCurrentSession().createQuery(hql);
 		return q.list();
 	}
@@ -185,7 +188,7 @@ public class BaseDaoImpl<T> implements BaseDaoI<T> {
 	@Override
 	@Transactional
 	public Long count(String hql, Map<String, Object> params) {
-		this.getCurrentSession().beginTransaction();
+//		this.getCurrentSession().beginTransaction();
 //		System.out.print(">>>>>事务管理器："+platformTransactionManager);
 		Query q = this.getCurrentSession().createQuery(hql);
 		if (params != null && !params.isEmpty()) {

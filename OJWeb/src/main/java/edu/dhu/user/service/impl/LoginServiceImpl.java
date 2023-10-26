@@ -6,6 +6,7 @@ import edu.dhu.user.service.LoginService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,8 +26,6 @@ public class LoginServiceImpl implements LoginService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(account.getUsername(), account.getPassword());
         // 传入authenticationManager，authenticationManager会调用UserDetailsService实现类中的loadUserByUsername方法去数据库中查询用户信息
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        if (authentication == null)
-            return RespBean.error("登陆失败!");
         // 获取用户信息
         account = (Account) authentication.getPrincipal();
         // 生成token

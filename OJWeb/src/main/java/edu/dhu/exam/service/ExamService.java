@@ -1,11 +1,10 @@
 package edu.dhu.exam.service;
 
 import edu.dhu.exam.dao.*;
-import edu.dhu.exam.model.Adminusers;
 import edu.dhu.exam.model.DataGrid;
 import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.PMExam;
-import org.apache.ibatis.session.RowBounds;
+import edu.dhu.user.model.Adminusers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +24,6 @@ public class ExamService {
     private ItrainProblemCatDaoI itrainProblemCatDao;
     @Resource
     private AdminusersDaoI adminusersDao;
-    @Resource
-    private AdminusersDaoNew adminusersDaoNew;
-    @Resource
-    private ItrainProblemCatDaoNew itrainProblemCatDaoNew;
 
     public Long syncTime(Integer examId) {
         Date date = examDaoNew.getExamEndTime(examId);

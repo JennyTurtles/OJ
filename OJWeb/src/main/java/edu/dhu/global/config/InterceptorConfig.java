@@ -17,7 +17,7 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**") //拦截所有请求，判断token是否合法决定是否需要登录
-                .excludePathPatterns("/login/student","/login/admin","/login","/static/**"); //放行登录和静态资源
+                .excludePathPatterns("/login/student","/login/admin","/login","/static/**","/error"); //放行登录和静态资源
     }
 
 //    @Override

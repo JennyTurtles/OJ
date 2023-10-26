@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface AccountDao {
-    @Select("select name from users where ID = #{ID}")
+    @Select("select chineseName name from users where ID = #{ID}")
     public String getStudentNameByID(Integer ID);
 
     @Select("select name from adminusers where ID = #{ID}")
