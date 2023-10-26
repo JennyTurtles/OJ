@@ -1,22 +1,16 @@
 package edu.dhu.user.controller;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ModelDriven;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import edu.dhu.global.model.DecodeToken;
 import edu.dhu.global.model.RespBean;
 import edu.dhu.user.model.PMUser;
 import edu.dhu.user.model.Users;
 import edu.dhu.user.service.UserServiceI;
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
-import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -335,40 +329,30 @@ public class UserController{
 //		}
 //	}
 //
-//	public void findUserByStudentNoSchoolId() // 根据学号学校Id获取学生的信息
-//	{
-//		String studentNo = user.getStudentNo();
-//		int schoolId = user.getSchoolId();
-//		Map<String, Object> session = ActionContext.getContext().getSession();
-//		SessionInfo sessionInfo = (SessionInfo) session.get("sessionInfo");
-//		Json j = new Json();
-//		if (sessionInfo != null) {
-//			if (sessionInfo.getRoleNames().equals("student") && !sessionInfo.getStudentNo().equals(studentNo)) {
-//				j.setSuccess(false);
-//				j.setMsg("请尝试安全操作");
-//				logger.info("恶意请求");
-//				super.writeJson(j);
-//				return;
-//			}
-//			Users user = userService.findUserByStudentNoSchoolId(studentNo, schoolId); // 用户信息
-//			if (user != null) {
-//
-//				j.setSuccess(true);
-//				j.setMsg("获取学生信息成功");
-//				j.setObj(user);
-//				logger.info("获取学生信息成功");
-//				super.writeJson(j);
-//			} else {
-//				j.setSuccess(false);
-//				j.setMsg("学生学号不存在！");
-//				super.writeJson(j);
-//			}
-//		}else {
-//			j.setSuccess(false);
-//			j.setMsg("请先登录。");
-//			super.writeJson(j);
-//		}
-//	}
+	@PostMapping("/findUserByStudentNoSchoolId")
+	public RespBean findUserByStudentNoSchoolId(@RequestBody Users user,HttpServletRequest request) // 根据学号学校Id获取学生的信息
+	{
+		String studentNo = user.getStudentNo();
+		int schoolId = user.getSchoolId();
+		DecodeToken decodeToken = null;
+		try {
+			decodeToken = new DecodeToken(request);
+		}catch (JWTDecodeException ignored){};
+		if (decodeToken != null) { // 需要修改
+			String role = decodeToken.getRole();
+			if (role.equals("student") && !decodeToken.getStudentNo().equals(studentNo)) {
+				return RespBean.error("请尝试安全操作");
+			}
+			user = userService.findUserByStudentNoSchoolId(studentNo, schoolId); // 用户信息
+			if (user != null) {
+				return RespBean.ok("获取学生信息成功",user);
+			} else {
+				return RespBean.error("学生学号不存在！");
+			}
+		}else {
+			return RespBean.error("请先登录。");
+		}
+	}
 //
 //	public void getUserAdd() // 添加学生的信息
 //	{
@@ -500,7 +484,7 @@ public class UserController{
 
 	@PostMapping("/signUser")
 	@Transactional
-	public RespBean signUser(@RequestBody PMUser user, HttpServletRequest request) {
+	public RespBean signUser(@RequestBody PMUser user) {
 
 		Users pmuser = userService.findStudentByusername(user.getUsername());
 		if (pmuser == null) {

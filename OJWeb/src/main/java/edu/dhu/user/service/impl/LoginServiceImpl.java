@@ -29,7 +29,7 @@ public class LoginServiceImpl implements LoginService {
         // 获取用户信息
         account = (Account) authentication.getPrincipal();
         // 生成token
-        String token = TokenUtils.genToken(account.getID().toString(),account.getRole());
+        String token = TokenUtils.genToken(account.getID().toString(),account.getRole(),account.getCode());
         // 生成响应对象
         Map<String,String> map = new HashMap<>();
         map.put("token",token);

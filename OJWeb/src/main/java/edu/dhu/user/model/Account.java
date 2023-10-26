@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 // 需要实现UserDetail接口以便让SpringSecurity进行认证
@@ -26,6 +27,7 @@ public class Account implements UserDetails{
     private Date createDate;
     private Integer schoolID;
     private String role;
+    private String code;
 
     @Override
     public boolean equals(Object o) {
