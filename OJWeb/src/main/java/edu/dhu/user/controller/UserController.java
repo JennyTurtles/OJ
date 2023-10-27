@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import static edu.dhu.global.util.PasswordUtil.getBCryptPassword;
+
 @RestController
 @RequestMapping("/user")
 public class UserController{
@@ -125,25 +127,20 @@ public class UserController{
 //	}
 //
 //	// 修改用户信息
-//	public void editUserInfo() {
-//		// 从session中获取登录的用户id
-//		Map<String, Object> session = ActionContext.getContext().getSession();
-//		SessionInfo sessionInfo = (SessionInfo) session.get("sessionInfo");
-//		int id = sessionInfo.getUserId();
-//		this.user.setId(id);
-//
-//		Json j = new Json();
-//		boolean b = userService.editUserInfo(user);
-//		if (b) {
-//			j.setSuccess(true);
-//			j.setMsg("修改用户信息成功！");
-//			logger.info("********修改用户信息成功！********");
-//		} else {
-//			j.setSuccess(false);
-//			j.setMsg("修改用户信息失败！");
-//		}
-//		super.writeJson(j);
-//	}
+	@PostMapping("/editUserInfo")
+	public RespBean editUserInfo(@RequestBody PMUser user,HttpServletRequest request) {
+		// 从session中获取登录的用户id
+		DecodeToken decodeToken = new DecodeToken(request);
+		String id = decodeToken.getUserId();
+		user.setId(Integer.valueOf(id));
+
+		boolean b = userService.editUserInfo(user);
+		if (b) {
+			return RespBean.ok("修改用户信息成功");
+		} else {
+			return RespBean.error("修改用户信息失败");
+		}
+	}
 //
 //	public void editUserInfoByTeacher() // 老师修改学生的信息
 //	{
@@ -174,26 +171,20 @@ public class UserController{
 //		}
 //	}
 //
-//	// 修改用户密码
-//	public void editUserPassword() {
-//		// 从session中获取登录的用户id
-//		Map<String, Object> session = ActionContext.getContext().getSession();
-//		SessionInfo sessionInfo = (SessionInfo) session.get("sessionInfo");
-//		int id = sessionInfo.getUserId();
-//		this.user.setId(id);
-//		boolean b = userService.editUserPassword(user);
-//
-//		Json j = new Json();
-//		if (b) {
-//			j.setSuccess(true);
-//			j.setMsg("修改用户密码成功");
-//			logger.info("********修改用户密码成功********");
-//		} else {
-//			j.setSuccess(false);
-//			j.setMsg("修改用户密码失败");
-//		}
-//		super.writeJson(j);
-//	}
+	// 修改用户密码
+	@PostMapping("/editUserPassword")
+	public RespBean editUserPassword(@RequestBody PMUser user,HttpServletRequest request) {
+		DecodeToken decodeToken = new DecodeToken(request);
+		String id = decodeToken.getUserId();
+		user.setId(Integer.valueOf(id));
+		user.setPassword(getBCryptPassword(user.getPassword()));
+		boolean b = userService.editUserPassword(user);
+		if (b) {
+			return RespBean.ok("修改用户密码成功");
+		} else {
+			return RespBean.error("修改用户密码失败");
+		}
+	}
 //
 //	public void editUserPasswordByTeacher() { // 老师修改学生密码
 //		// 从session中获取登录的用户id
@@ -491,6 +482,7 @@ public class UserController{
 			Users u = userService.findUserByStudentNoSchoolId(user.getStudentNo(), user.getSchoolId()); // 用户信息
 			if (u != null) {
 				if (u.getUsername() == "" || u.getUsername().equals("")) {
+					user.setPassword(getBCryptPassword(user.getPassword()));
 					boolean results = userService.updateSignStudent(user);
 					if (results) {
 						return RespBean.ok("修改学生注册信息成功");
@@ -501,6 +493,7 @@ public class UserController{
 					return RespBean.error("1",u);
 				}
 			} else {
+				user.setPassword(getBCryptPassword(user.getPassword()));
 				boolean results = userService.addSignStudent(user);
 				if (results) {
 					return RespBean.ok("添加学生注册信息成功");
@@ -653,6 +646,7 @@ public class UserController{
 //
 	@PostMapping("/updatePasswordByUserName")
 	public RespBean updatePasswordByUserName(@RequestBody PMUser user) {
+		user.setPassword(getBCryptPassword(user.getPassword()));
 		boolean result = userService.updatePasswordByUserName(user);
 		if (result) {
 			return RespBean.ok("重置密码成功");

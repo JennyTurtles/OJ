@@ -4,11 +4,9 @@ import cn.hutool.core.util.StrUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import edu.dhu.user.model.Account;
 import edu.dhu.global.exception.Constants;
 import edu.dhu.global.exception.ServiceException;
-import edu.dhu.global.util.TokenUtils;
-import org.apache.cxf.security.SecurityContext;
+import edu.dhu.global.util.TokenUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,7 +25,7 @@ import java.util.Arrays;
 public class JwtInterceptor implements HandlerInterceptor {
 
     @Resource
-    private TokenUtils tokenUtils;
+    private TokenUtil tokenUtil;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -40,7 +38,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             throw new ServiceException(Constants.CODE_401, "无token，请重新登录");
         }
         try {
-            tokenUtils.verifyToken(token);
+            tokenUtil.verifyToken(token);
         } catch (JWTVerificationException e) {
             throw new ServiceException(Constants.CODE_401, "token验证失败，请重新登录");
         }
