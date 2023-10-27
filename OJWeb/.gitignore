@@ -64,5 +64,6 @@ mvnw
 .properties
 sring-hibernate.xml
 src/main/resources/application.properties
+src/test/resources/application.properties
 # Files or folders need to be retained
 # ...
