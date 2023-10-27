@@ -23,19 +23,19 @@ Copilot（可选）
 
 功能模块与功能模块之间尽可能少地相互引用，全局模块中存放工具类和常用实体类，可被功能模块引用。
 
-![image-20231026114332020](/Users/gongrunze/Library/Application Support/typora-user-images/image-20231026114332020.png)
+![image-20231026114332020](https://github.com/JennyTurtles/OJ/blob/main/OJWeb/pictures/1.png)
 
 ### 功能模块
 
 功能模块采用SSM结构，每个模块内均包含controller，dao，model，service这四个文件夹。
 
-![image-20231026120140058](/Users/gongrunze/Library/Application Support/typora-user-images/image-20231026120140058.png)
+![image-20231026120140058](https://github.com/JennyTurtles/OJ/blob/main/OJWeb/pictures/2.png)
 
 ### 全局模块
 
 全局模块包含aop（切面，能实现不修改原代码的情况下进行功能增强），config（全局配置，主要用于安全控制，用户认证），exception（全局异常处理），model（通用实体类，如响应体RespBean），util（工具类，如token解析工具）。
 
-![image-20231026120313276](/Users/gongrunze/Library/Application Support/typora-user-images/image-20231026120313276.png)
+![image-20231026120313276](https://github.com/JennyTurtles/OJ/blob/main/OJWeb/pictures/3.png)
 
 ### 配置文件
 
