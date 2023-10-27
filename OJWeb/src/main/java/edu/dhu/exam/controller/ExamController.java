@@ -31,6 +31,8 @@ public class ExamController {
     @GetMapping("/examList")
     @Transactional
     public RespBean getExamList(Integer pageNum,Integer pageSize, HttpServletRequest request) {
+        if (pageNum < 1 || pageSize < 1)
+            return RespBean.error("参数错误！");
         PMExam pMExam = new PMExam();
         pMExam.setPage(pageNum);
         pMExam.setRows(pageSize);
