@@ -5,10 +5,8 @@ import edu.dhu.user.model.Json;
 import edu.dhu.user.model.PMUser;
 import edu.dhu.user.model.Users;
 
-import javax.jws.WebService;
 import java.util.List;
 
-@WebService
 public interface UserServiceI {
 
 	// 保存用户信息用于注册

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-//注解userService   在action中使用
 @Service("userService")
 @Transactional
 public class UserServiceImpl implements UserServiceI {
