@@ -20,10 +20,11 @@ import java.sql.SQLIntegrityConstraintViolationException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ServiceException.class)
     public RespBean serviceException(ServiceException e) {
         if (e.getCode().equals("401"))
-            return RespBean.error(e.getMessage());
+            return new RespBean(401, e.getMessage(), null);
         else
             return RespBean.error("未知错误");
     }
