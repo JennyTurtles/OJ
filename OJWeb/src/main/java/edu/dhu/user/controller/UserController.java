@@ -3,6 +3,7 @@ package edu.dhu.user.controller;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import edu.dhu.global.model.DecodeToken;
 import edu.dhu.global.model.RespBean;
+import edu.dhu.user.dao.UserDaoI;
 import edu.dhu.user.model.PMUser;
 import edu.dhu.user.model.Users;
 import edu.dhu.user.service.UserServiceI;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import static edu.dhu.global.util.PasswordUtil.checkPassword;
 import static edu.dhu.global.util.PasswordUtil.getBCryptPassword;
 
 @RestController
@@ -20,6 +22,8 @@ public class UserController{
 
 	@Resource
 	private UserServiceI userService;
+	@Resource
+	private UserDaoI userDao;
 //	@Resource
 //	private ClassstudentsDaoI classstudentsDao;
 //	@Resource
@@ -176,8 +180,12 @@ public class UserController{
 	public RespBean editUserPassword(@RequestBody PMUser user,HttpServletRequest request) {
 		DecodeToken decodeToken = new DecodeToken(request);
 		String id = decodeToken.getUserId();
+		Users u = userService.getUser(Integer.valueOf(id));
+		if (!checkPassword(user.getPassword(),u.getPassword())) {
+			return RespBean.error("密码校验失败");
+		}
 		user.setId(Integer.valueOf(id));
-		user.setPassword(getBCryptPassword(user.getPassword()));
+		user.setPassword(getBCryptPassword(user.getNewPassword()));
 		boolean b = userService.editUserPassword(user);
 		if (b) {
 			return RespBean.ok("修改用户密码成功");

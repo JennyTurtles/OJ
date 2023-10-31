@@ -90,8 +90,18 @@ public class PMUser implements java.io.Serializable {
 	private Integer id;
 	private String username;
 	private String password;
+	private String newPassword;
 	private String studentNo;
 	private String chineseName;
+
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
+
 	private String banji;
 	private Date createDate;
 	private String email;
