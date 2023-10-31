@@ -3,6 +3,8 @@ package edu.dhu.user.controller;
 import edu.dhu.global.model.DecodeToken;
 import edu.dhu.user.dao.AccountDao;
 import edu.dhu.global.model.RespBean;
+import edu.dhu.user.model.Adminusers;
+import edu.dhu.user.model.Users;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +33,16 @@ public class AccountController {
 
         Map<String,String> map = new HashMap<>();
         map.put("role",role);
-        if (role.equals("student"))
-            map.put("name",accountDao.getStudentNameByID(Integer.parseInt(userId)));
-        else
-            map.put("name",accountDao.getAdminNameByID(Integer.parseInt(userId)));
+        if (role.equals("student")){
+            Users users = accountDao.getUserByID(Integer.parseInt(userId));
+            map.put("name",users.getChineseName());
+            map.put("username",users.getUsername());
+        }
+        else{
+            Adminusers adminusers = accountDao.getAdminUserByID(Integer.parseInt(userId));
+            map.put("name",adminusers.getName());
+            map.put("username",adminusers.getAccount());
+        }
         return RespBean.ok("查询成功", map);
     }
 }
