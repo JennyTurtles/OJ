@@ -162,6 +162,8 @@ public class UserServiceImpl implements UserServiceI {
 		if (user.getPassword() != null && !user.getPassword().trim().equals("")) {
 			Users theUser = userDao.get(Users.class, user.getId());
 			theUser.setPassword(user.getPassword());
+			if (theUser.getSchoolId() == null)
+				theUser.setSchoolId(1);
 			userDao.save(theUser);
 			return true;
 		} else {
