@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 
 @Configuration
 @EnableWebSecurity
-public class InterceptorConfig extends WebMvcConfigurationSupport {
+public class HttpInterceptorConfig extends WebMvcConfigurationSupport {
     @Resource
     private JwtInterceptor jwtInterceptor;
     @Override
