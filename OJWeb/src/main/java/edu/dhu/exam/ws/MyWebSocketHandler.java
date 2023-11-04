@@ -1,5 +1,7 @@
 package edu.dhu.exam.ws;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 @Component
 @Slf4j
@@ -36,19 +39,26 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String userId = session.getAttributes().get("userId").toString();
+        // 如果同一个用户重复登陆，关闭之前的连接
+        if (sessionPools.containsKey(Integer.parseInt(userId))) {
+            sessionPools.get(Integer.parseInt(userId)).close();
+        }
         WebSocketSession put = sessionPools.put(Integer.parseInt(userId), session);
         if (put == null) {
             addOnlineCount();
         }
         session.sendMessage(new TextMessage("成功连接判题服务器！"));
+        log.info("用户：【{}】成功连接判题服务器！当前在线人数：【{}】",userId,onlineNum);
     }
 
     // 接受客户端消息,似乎OJ用不到。
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        JSONObject jsonObject = JSON.parseObject(message.getPayload());
+        String toSid = jsonObject.getString("sid");
+        String msg = jsonObject.getString("message");
         String userId = (String) session.getAttributes().get("userId");
-        String text = message.getPayload();
-        session.sendMessage(new TextMessage(String.format("收到用户：【%s】发来的【%s】",userId,text)));
+        sendToUser(toSid, String.format("用户：【%s】发来消息：【%s】",userId,msg));
     }
 
     @Override

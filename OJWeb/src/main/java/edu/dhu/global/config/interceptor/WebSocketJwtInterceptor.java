@@ -29,7 +29,7 @@ public class WebSocketJwtInterceptor implements HandshakeInterceptor {
         //获取参数
         String userId = serverHttpRequest.getServletRequest().getParameter("userId");
         String token = serverHttpRequest.getServletRequest().getParameter("token");
-        if(StrUtil.isBlank((token))){
+        if(StrUtil.isBlank((token)) || StrUtil.isBlank((userId))){
             return false;
         }
         try {
