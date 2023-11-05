@@ -10,10 +10,17 @@
 <script setup>
 import { useUserStore } from '@/store'
 import { renderIcon } from '@/utils'
+import { useRouter } from 'vue-router';
 
+const router = useRouter()
 const userStore = useUserStore()
 
 const options = [
+  {
+    label: '个人设置',
+    key: 'PersonSetting',
+    icon: renderIcon('mdi:exit-to-app', { size: '14px' }),
+  },
   {
     label: '退出登录',
     key: 'logout',
@@ -32,6 +39,8 @@ function handleSelect(key) {
         $message.success('已退出登录')
       },
     })
+  }else if(key === 'PersonSetting'){
+    router.push({name: key})
   }
 }
 </script>

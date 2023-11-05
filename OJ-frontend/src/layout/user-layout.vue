@@ -5,14 +5,14 @@
         class="bg-primary text-white sticky "
         dark="bg-dark border-0"
       >
-        <div class="f-c-c container-w w-full m-auto" :style="`height: ${header.height}px`">
+        <div class="f-c-c container-w m-auto" :style="`height: ${header.height}px`">
           <div flex items-center>
             <img src="@/assets/images/logo.png" height="44" class="mr-30" />
           </div>
           
           <div class="flex-1 flex items-stretch h-full gap-x-30px gap-y-20px">
             <router-link
-              v-for="item,idx in [{label:'首页', to:'/user/index'},{label:'考试', to:'/user/exam'},{label:'加入班级', to:'/user/class'}]"
+              v-for="item,idx in [{label:'首页', to:'/user/index'},{label:'考试', to:'/user/exam-list'},{label:'加入班级', to:'/user/take-class'}]"
               :to="item.to" :key="idx" class="f-c-c px-4 hover:color-gray">
             {{ item.label }}
             </router-link>
@@ -50,7 +50,7 @@
         </div>
       </header>
 
-      <section flex-1 min-h-300 overflow-hidden flex-col items-center bg-hex-f5f6fb dark:bg-hex-101014>
+      <section class="flex-1 min-h-300  flex-col  items-center bg-hex-f5f6fb cus-scroll-y "  dark:bg-hex-101014>
         <!-- 登录Modal -->
         <n-modal
           v-model:show="userStore.showLoginModal"
@@ -88,6 +88,7 @@ import { getToken, isAdminEnd, isNullOrWhitespace } from '../utils';
 const appStore = useAppStore()
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 
 const helpOptions = [
   {
@@ -109,7 +110,7 @@ const helpOptions = [
 ]
 const handleSelect = (path)=>{
   console.log(path);
-  if(path){
+  if(path && path.length>1){
     router.push(`/user${path}`)
   }
 }
@@ -117,10 +118,9 @@ const handleSelect = (path)=>{
 
 onMounted(() => {
   const token = getToken()
-  if(isNullOrWhitespace(token)){
+  if(isNullOrWhitespace(token) && ["UserIndex", "ExamList",'TakeClass'].includes(route.name)){
     userStore.openLoginModal()
   }
-  console.log('remember to open modal');
 })
 
 </script>

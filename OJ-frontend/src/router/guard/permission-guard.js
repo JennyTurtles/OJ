@@ -7,6 +7,8 @@ const WHITE_LIST = [
   '/user/login',
   '/user/faq',
   '/user/signup',
+  '/user/re-pw-info',
+  '/user/reset-password',
   '/404',
   '/admin/login',
 ]
