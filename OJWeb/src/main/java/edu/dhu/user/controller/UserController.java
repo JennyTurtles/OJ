@@ -498,7 +498,7 @@ public class UserController{
 						return RespBean.error("修改学生注册信息失败");
 					}
 				} else {
-					return RespBean.error("1",u);
+					return RespBean.error(40000,"学生已注册且存在用户名",u);
 				}
 			} else {
 				user.setPassword(getBCryptPassword(user.getPassword()));

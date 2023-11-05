@@ -24,6 +24,10 @@ public class RespBean {
         return new RespBean(400, msg, obj);
     }
 
+    public static RespBean error(Integer code, String msg,Object obj) {
+        return new RespBean(code, msg, obj);
+    }
+
     public RespBean(Integer code, String message, Object data) {
         this.code = code;
         this.message = message;
