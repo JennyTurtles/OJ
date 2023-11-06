@@ -68,6 +68,8 @@ xsi:schemaLocation="
 			<list>
 				<value>edu.dhu.exam.model</value>
 				<value>edu.dhu.user.model</value>
+				<value>edu.dhu.problem.model</value>
+				<value>edu.dhu.global.model</value>
 			</list>
 		</property>
 	</bean>

@@ -7,11 +7,14 @@ import edu.dhu.user.dao.UserDaoI;
 import edu.dhu.user.model.PMUser;
 import edu.dhu.user.model.Users;
 import edu.dhu.user.service.UserServiceI;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Objects;
 
 import static edu.dhu.global.util.PasswordUtil.checkPassword;
 import static edu.dhu.global.util.PasswordUtil.getBCryptPassword;
@@ -481,6 +484,9 @@ public class UserController{
 //		}
 //	}
 
+	// 此处有并发注册BUG
+	// 1.解决方案1:加锁
+	// 2.解决方案2:数据库唯一索引，捕获异常
 	@PostMapping("/signUser")
 	@Transactional
 	public RespBean signUser(@RequestBody PMUser user) {
@@ -489,7 +495,7 @@ public class UserController{
 		if (pmuser == null) {
 			Users u = userService.findUserByStudentNoSchoolId(user.getStudentNo(), user.getSchoolId()); // 用户信息
 			if (u != null) {
-				if (u.getUsername() == "" || u.getUsername().equals("")) {
+				if (StringUtils.isBlank(u.getUsername())) {
 					user.setPassword(getBCryptPassword(user.getPassword()));
 					boolean results = userService.updateSignStudent(user);
 					if (results) {
