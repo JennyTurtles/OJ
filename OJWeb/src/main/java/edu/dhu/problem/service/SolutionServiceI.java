@@ -3,9 +3,7 @@ package edu.dhu.problem.service;
 
 import edu.dhu.exam.model.ExamStudent;
 import edu.dhu.exam.model.Studentexamdetail;
-import edu.dhu.problem.model.PMSolution;
-import edu.dhu.problem.model.PMWrongAndCorrectIds;
-import edu.dhu.problem.model.Solution;
+import edu.dhu.problem.model.*;
 import edu.dhu.user.model.Json;
 
 import java.util.List;
@@ -106,15 +104,15 @@ public interface SolutionServiceI {
 								  PMWrongAndCorrectIds pMWrongAndCorrectIds, Json j,
 								  boolean isOverSimilarity);
 //
-//	public Json WS_submitThisProblem(Studentexamdetail studentexamdetail,
-//			PMSubmitProblemInfo WS_solution);
-//
-//	public List<Solution> getSolutionsByNumber(int number); // 查找状态为WAIT的solutions
-//
-//	public int editStudentScore(Solution solution);
-//
-//	public Json WS_ItrainSubmitThisProblem(StudentTrainProbDetail stpd,PMSubmitProblemInfo WS_solution,String continueTrain);
-//
+	public Json WS_submitThisProblem(Studentexamdetail studentexamdetail,
+			PMSubmitProblemInfo WS_solution);
+
+	public List<Solution> getSolutionsByNumber(int number); // 查找状态为WAIT的solutions
+
+	public int editStudentScore(Solution solution);
+
+	public Json WS_ItrainSubmitThisProblem(StudentTrainProbDetail stpd, PMSubmitProblemInfo WS_solution, String continueTrain);
+
 //	public Json submitItrainThisProblem(StudentTrainProbDetail stpd,
 //			PMWrongAndCorrectIds pMWrongAndCorrectIds, Json j,
 //			boolean isOverSimilarity,String continueTrain);

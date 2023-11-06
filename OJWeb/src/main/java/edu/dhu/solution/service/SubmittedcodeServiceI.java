@@ -4,6 +4,7 @@ package edu.dhu.solution.service;
 import edu.dhu.exam.model.Studentexamdetail;
 import edu.dhu.problem.model.Problems;
 import edu.dhu.problem.model.Solution;
+import edu.dhu.problem.model.StudentTrainProbDetail;
 import edu.dhu.problem.model.Wrongcases;
 import edu.dhu.solution.model.Submittedcode;
 import edu.dhu.user.model.Json;
@@ -43,16 +44,16 @@ public interface SubmittedcodeServiceI {
 	public Solution WS_updateResult(Problems problem, Solution solution, List<Wrongcases> wrongcases);
 	
 	//客户端智能训练提交代码操作
-//	public Solution WS_ItrainsubmitCode(Problems problem, Solution solution,
-//			StudentTrainProbDetail stpd, List<Wrongcases> wrongcases,
-//			Date now, Date startTime, Date endTime);
-//
-//	//web端智能训练保存提交代码操作
-//	public Json itrainSubmitCode(Problems problem, Solution solution,
-//			StudentTrainProbDetail stpd, Date now, Date startTime,
-//				Date endTime);
+	public Solution WS_ItrainsubmitCode(Problems problem, Solution solution,
+			StudentTrainProbDetail stpd, List<Wrongcases> wrongcases,
+			Date now, Date startTime, Date endTime);
+
+	//web端智能训练保存提交代码操作
+	public Json itrainSubmitCode(Problems problem, Solution solution,
+			StudentTrainProbDetail stpd, Date now, Date startTime,
+				Date endTime);
 //
 //	// 根据Solution,StudentTrainProbDetail提交最新的solution
 //	//public boolean itrainSubmitThisProblem(Solution solu,StudentTrainProbDetail stpd,String continueTrain);
-//	public String itrainSubmitThisProblem(Solution solu,StudentTrainProbDetail stpd,String continueTrain);
+	public String itrainSubmitThisProblem(Solution solu, StudentTrainProbDetail stpd, String continueTrain);
 }

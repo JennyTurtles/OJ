@@ -6,12 +6,10 @@ import edu.dhu.exam.dao.StudentexamdetailDaoI;
 import edu.dhu.exam.dao.StudentexaminfoDaoI;
 import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.ExamStudent;
+import edu.dhu.exam.model.ItrainProbCatgory;
 import edu.dhu.exam.model.Studentexamdetail;
 import edu.dhu.global.model.Constant;
-import edu.dhu.problem.dao.ExamproblemDaoI;
-import edu.dhu.problem.dao.ProblemsDaoI;
-import edu.dhu.problem.dao.SimilaritywarningDaoI;
-import edu.dhu.problem.dao.SolutionDaoI;
+import edu.dhu.problem.dao.*;
 import edu.dhu.problem.model.*;
 import edu.dhu.problem.service.CheckSimilarityServiceI;
 import edu.dhu.problem.service.SimilaritywarningServiceI;
@@ -51,10 +49,21 @@ public class SolutionServiceImpl implements SolutionServiceI {
 	private SimilaritywarningServiceI similaritywarningService;
 	@Resource
 	private SubmittedcodeServiceI submittedcodeService;
+	@Resource
+	private SimilaritywarningDaoI similaritywarningDao;
+	@Resource
+	private SubmittedcodeDaoI submittedcodeDao;
+	@Resource
+	private StudentTrainDetailDaoI studentTrainDetailDao;
+	@Resource
 	private SolutionDaoI solutionDao;
+	@Resource
 	private UserDaoI userDao;
+	@Resource
 	private ExamproblemDaoI examproblemDao;
+	@Resource
 	private ProblemsDaoI problemsDao;
+
 //	private SimilaritywarningDaoI similaritywarningDao;
 	private StudentexamdetailDaoI studentexamdetailDao;
 	private StudentexaminfoDaoI studentexaminfoDao;
@@ -68,105 +77,6 @@ public class SolutionServiceImpl implements SolutionServiceI {
 //	private GradeProblemServiceI gradeProblemService;
 	private ItrainProblemCatDaoI itrainProblemCatDao;
 
-//	public SimilaritywarningServiceI getSimilaritywarningService() {
-//		return similaritywarningService;
-//	}
-//
-//	@Autowired
-//	public void setClassesServiceI(ClassesServiceI classesServiceI) {
-//		this.classesServiceI = classesServiceI;
-//	}
-//
-//	public ClassesServiceI getClassesServiceI() {
-//		return classesServiceI;
-//	}
-//
-//	@Autowired
-//	public void setClassstudentsDao(ClassstudentsDaoI classstudentsDao) {
-//		this.classstudentsDao = classstudentsDao;
-//	}
-//
-//	public ClassstudentsDaoI getClassstudentsDaoI() {
-//		return classstudentsDao;
-//	}
-
-//	@Autowired
-//	public void setSimilaritywarningService(SimilaritywarningServiceI similaritywarningService) {
-//		this.similaritywarningService = similaritywarningService;
-//	}
-
-//	public ExamDaoI getExamDao() {
-//		return examDao;
-//	}
-
-//	public SubmittedcodeServiceI getSubmittedcodeService() {
-//		return submittedcodeService;
-//	}
-//
-//	@Autowired
-//	public void setSubmittedcodeService(SubmittedcodeServiceI submittedcodeService) {
-//		this.submittedcodeService = submittedcodeService;
-//	}
-
-//	public CheckSimilarityServiceI getCheckSimilarityService() {
-//		return checkSimilarityService;
-//	}
-//
-//	@Autowired
-//	public void setCheckSimilarityService(CheckSimilarityServiceI checkSimilarityService) {
-//		this.checkSimilarityService = checkSimilarityService;
-//	}
-
-	@Autowired
-	public void setExamDao(ExamDaoI examDao) {
-		this.examDao = examDao;
-	}
-
-	public SolutionDaoI getSolutionDao() {
-		return solutionDao;
-	}
-
-	@Autowired
-	public void setSolutionDao(SolutionDaoI solutionDao) {
-		this.solutionDao = solutionDao;
-	}
-
-	@Autowired
-	public void setUserDao(UserDaoI userDao) {
-		this.userDao = userDao;
-	}
-
-	public UserDaoI getUserDao() {
-		return userDao;
-	}
-
-	@Autowired
-	public void setExamproblemDao(ExamproblemDaoI examproblemDao) {
-		this.examproblemDao = examproblemDao;
-	}
-
-	public ExamproblemDaoI getExamproblemDao() {
-		return examproblemDao;
-	}
-
-	@Autowired
-	public void setProblemsDao(ProblemsDaoI problemsDao) {
-		this.problemsDao = problemsDao;
-	}
-
-	public ProblemsDaoI getProblemsDao() {
-		return problemsDao;
-	}
-
-//	@Autowired
-//	public void setSimilaritywarningDao(SimilaritywarningDaoI similaritywarningDao) {
-//		this.similaritywarningDao = similaritywarningDao;
-//	}
-//
-//	public SimilaritywarningDaoI getSimilaritywarningDao() {
-//		return similaritywarningDao;
-//	}
-
 	@Autowired
 	public void setStudentexamdetailDao(StudentexamdetailDaoI studentexamdetailDao) {
 		this.studentexamdetailDao = studentexamdetailDao;
@@ -175,15 +85,6 @@ public class SolutionServiceImpl implements SolutionServiceI {
 	public StudentexamdetailDaoI getStudentexamdetailDao() {
 		return studentexamdetailDao;
 	}
-
-//	@Autowired
-//	public void setSubmittedcodeDao(SubmittedcodeDaoI submittedcodeDao) {
-//		this.submittedcodeDao = submittedcodeDao;
-//	}
-//
-//	public SubmittedcodeDaoI getSubmittedcodeDao() {
-//		return submittedcodeDao;
-//	}
 
 	@Override
 	public boolean submitCode(Solution solution) {
@@ -198,48 +99,7 @@ public class SolutionServiceImpl implements SolutionServiceI {
 	public StudentexaminfoDaoI getStudentexaminfoDao() {
 		return studentexaminfoDao;
 	}
-	
-//	public ItrainproblemDaoI getItrainproblemDao() {
-//		return itrainproblemDao;
-//	}
-//	@Autowired
-//	public void setItrainproblemDao(ItrainproblemDaoI itrainproblemDao) {
-//		this.itrainproblemDao = itrainproblemDao;
-//	}
-	
-//	public StudentTrainDetailDaoI getStudentTrainDetailDao() {
-//		return studentTrainDetailDao;
-//	}
-//	@Autowired
-//	public void setStudentTrainDetailDao(StudentTrainDetailDaoI studentTrainDetailDao) {
-//		this.studentTrainDetailDao = studentTrainDetailDao;
-//	}
 
-//	public ItrainProblemCatDaoI getItrainProblemCatDao() {
-//		return itrainProblemCatDao;
-//	}
-
-//	@Autowired
-//	public void setItrainProblemCatDao(ItrainProblemCatDaoI itrainProblemCatDao) {
-//		this.itrainProblemCatDao = itrainProblemCatDao;
-//	}
-
-//	public StudentTrainInfoDaoI getStudentTrainInfoDao() {
-//		return studentTrainInfoDao;
-//	}
-//	@Autowired
-//	public void setStudentTrainInfoDao(StudentTrainInfoDaoI studentTrainInfoDao) {
-//		this.studentTrainInfoDao = studentTrainInfoDao;
-//	}
-//
-//
-//	public GradeProblemServiceI getGradeProblemService() {
-//		return gradeProblemService;
-//	}
-//	@Autowired
-//	public void setGradeProblemService(GradeProblemServiceI gradeProblemService) {
-//		this.gradeProblemService = gradeProblemService;
-//	}
 
 	@Override
 	public String[] getCorrectCaseIds(int solutionId) {
@@ -638,22 +498,7 @@ public class SolutionServiceImpl implements SolutionServiceI {
 	}
 
 	@Override
-	public boolean deleteSubmitBySolutionId(int solutionId, int reason, boolean isCopy, String remark) {
-		return false;
-	}
-
-	@Override
 	public boolean deleteTrainSubmitBySolutionId(int solutionId, int reason, boolean isCopy, String remark) {
-		return false;
-	}
-
-	@Override
-	public boolean isSubmited(int solutionId) {
-		return false;
-	}
-
-	@Override
-	public boolean isTrainSubmited(int solutionId) {
 		return false;
 	}
 
@@ -801,25 +646,25 @@ public class SolutionServiceImpl implements SolutionServiceI {
 		return solutionDao.exportClassTrainLastCode(examId, classId);
 	}
 
-//	@Override
-//	public boolean deleteSubmitBySolutionId(int solutionId, int reason, boolean isCopy, String remark) {
-//
-//		// TODO Auto-generated method stub
-//		similaritywarningDao.deleteSubmitBySolutionId(solutionId, isCopy); // 删除Similaritywarning表中的submit
-//		Studentexamdetail detail = studentexamdetailDao.deleteFinishedBySolutionId(solutionId, reason); // 删除detail表中的finished
-//		if (detail != null) {
-//			int examId = detail.getExamId();
-//			int userId = detail.getUserId();
-//			String status = detail.getStatus();
-//			float score = detail.getScore();
-//			boolean finish = detail.isFinished();
-//			if (finish == true)
-//				studentexaminfoDao.deleteSubmit(userId, examId, score, status);
-//		}
-//		solutionDao.deleteSubmit(solutionId, reason, remark);
-//		submittedcodeDao.deleteCodeBySolutionId(solutionId); // 从Submittedcode表中删除
-//		return true;
-//	}
+	@Override
+	public boolean deleteSubmitBySolutionId(int solutionId, int reason, boolean isCopy, String remark) {
+
+		// TODO Auto-generated method stub
+		similaritywarningDao.deleteSubmitBySolutionId(solutionId, isCopy); // 删除Similaritywarning表中的submit
+		Studentexamdetail detail = studentexamdetailDao.deleteFinishedBySolutionId(solutionId, reason); // 删除detail表中的finished
+		if (detail != null) {
+			int examId = detail.getExamId();
+			int userId = detail.getUserId();
+			String status = detail.getStatus();
+			float score = detail.getScore();
+			boolean finish = detail.isFinished();
+			if (finish == true)
+				studentexaminfoDao.deleteSubmit(userId, examId, score, status);
+		}
+		solutionDao.deleteSubmit(solutionId, reason, remark);
+		submittedcodeDao.deleteCodeBySolutionId(solutionId); // 从Submittedcode表中删除
+		return true;
+	}
 
 //	@Override
 //	public boolean deleteTrainSubmitBySolutionId(int solutionId, int reason, boolean isCopy, String remark) {
@@ -911,33 +756,32 @@ public class SolutionServiceImpl implements SolutionServiceI {
 //		return true;
 //	}
 
-//	@Override
-//	public boolean isSubmited(int solutionId) {
-//		// TODO Auto-generated method stub
-//		Studentexamdetail detail = studentexamdetailDao.getDetailBySolutionId(solutionId);
-//		if (detail != null) {
-//			Similaritywarning warning = similaritywarningDao.getSimilaritywarningBySolutionId(solutionId);
-//			if (warning != null && warning.getSubmited() == true) // submitd==1
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+	@Override
+	public boolean isSubmited(int solutionId) {
+		Studentexamdetail detail = studentexamdetailDao.getDetailBySolutionId(solutionId);
+		if (detail != null) {
+			Similaritywarning warning = similaritywarningDao.getSimilaritywarningBySolutionId(solutionId);
+			if (warning != null && warning.getSubmited() == true) // submitd==1
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
-//	@Override
-//	public boolean isTrainSubmited(int solutionId) {
-//		// TODO Auto-generated method stub
-//		StudentTrainProbDetail detail = studentTrainDetailDao.getTrainDetailBySolutionId(solutionId);
-//		if (detail != null) {
-//			Similaritywarning warning = similaritywarningDao.getSimilaritywarningBySolutionId(solutionId);
-//			if (warning != null && warning.getSubmited() == true) // submitd==1
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+	@Override
+	public boolean isTrainSubmited(int solutionId) {
+		// TODO Auto-generated method stub
+		StudentTrainProbDetail detail = studentTrainDetailDao.getTrainDetailBySolutionId(solutionId);
+		if (detail != null) {
+			Similaritywarning warning = similaritywarningDao.getSimilaritywarningBySolutionId(solutionId);
+			if (warning != null && warning.getSubmited() == true) // submitd==1
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public Json submitThisProblem(Studentexamdetail studentexamdetail, PMWrongAndCorrectIds pMWrongAndCorrectIds,
@@ -1040,64 +884,60 @@ public class SolutionServiceImpl implements SolutionServiceI {
 		return null;
 	}
 //
-//	@Override
-//	public Json WS_submitThisProblem(Studentexamdetail studentexamdetail, PMSubmitProblemInfo WS_solution) {
-//		// TODO Auto-generated method stub
-//		Solution solution = null;
-//		Json j = new Json();
-//		if (studentexamdetail.getSolutionId() != null) {
-//			solution = getSolutionById(studentexamdetail.getSolutionId());
-//		} else {
-//			// 根据userId,examId,problemId以及Studentexamdetail的status在solution中查找ID值最大的solution
-//			solution = getLastSolutionByUserIdExamIdProblemIdAndStatus(WS_solution.getUserId(), WS_solution.getExamId(),
-//					WS_solution.getProblemId(), studentexamdetail.getStatus());
-//		}
-//		Examproblems examproblems = examproblemDao.getExamproblemsByExamIdAndProblemId(WS_solution.getExamId(),
-//				WS_solution.getProblemId());
-//		Date deadline = examproblems.getDeadline();
-//		Date submitTime = solution.getSubmitTime();
-//		if (deadline != null && submitTime.after(deadline)) {
-//			j.setSuccess(false);
-//			j.setMsg("提交时间已经晚于本题截止时间不能提交本题");
-//			return j;
-//		}
-//
-//		j = submitProblemCommon(WS_solution, solution);
-//		if(j.isSuccess()){
-//			if(WS_solution.isIfSubmit()){
-//				// 正常的提交本题
-//				if (submittedcodeService.submitThisProblem(solution, studentexamdetail)) {
-//					logger.info("用户ID为: " + WS_solution.getUserId() + "exam ID为:" + WS_solution.getExamId()
-//										+ " problem ID为: " + WS_solution.getProblemId() + "提交本题成功");
-//					j.setSuccess(true);
-//					j.setMsg("提交本题成功");
-//					return j;
-//				} else {
-//					logger.info("用户ID为: " + WS_solution.getUserId() + "exam ID为:" + WS_solution.getExamId()
-//										+ " problem ID为: " + WS_solution.getProblemId() + "提交本题失败");
-//					j.setSuccess(false);
-//					j.setMsg("提交本题失败");
-//					return j;
-//				}
-//			}else{
-//				j.setSuccess(true);
-//				j.setMsg("提交本题成功");
-//				return j;
-//			}
-//		}
-//		return j;
-//	}
+	@Override
+	public Json WS_submitThisProblem(Studentexamdetail studentexamdetail, PMSubmitProblemInfo WS_solution) {
+		// TODO Auto-generated method stub
+		Solution solution = null;
+		Json j = new Json();
+		if (studentexamdetail.getSolutionId() != null) {
+			solution = getSolutionById(studentexamdetail.getSolutionId());
+		} else {
+			// 根据userId,examId,problemId以及Studentexamdetail的status在solution中查找ID值最大的solution
+			solution = getLastSolutionByUserIdExamIdProblemIdAndStatus(WS_solution.getUserId(), WS_solution.getExamId(),
+					WS_solution.getProblemId(), studentexamdetail.getStatus());
+		}
+		Examproblems examproblems = examproblemDao.getExamproblemsByExamIdAndProblemId(WS_solution.getExamId(),
+				WS_solution.getProblemId());
+		Date deadline = examproblems.getDeadline();
+		Date submitTime = solution.getSubmitTime();
+		if (deadline != null && submitTime.after(deadline)) {
+			j.setSuccess(false);
+			j.setMsg("提交时间已经晚于本题截止时间不能提交本题");
+			return j;
+		}
 
-//	@Override
-//	public List<Solution> getSolutionsByNumber(int number) {
-//		return solutionDao.getSolutionsByNumber(number);
-//	}
-//
-//	@Override
-//	public int editStudentScore(Solution solution) {
-//		// TODO Auto-generated method stub
-//		return solutionDao.editStudentScore(solution);
-//	}
+		j = submitProblemCommon(WS_solution, solution);
+		if(j.isSuccess()){
+			if(WS_solution.isIfSubmit()){
+				// 正常的提交本题
+				if (submittedcodeService.submitThisProblem(solution, studentexamdetail)) {
+					j.setSuccess(true);
+					j.setMsg("提交本题成功");
+					return j;
+				} else {
+					j.setSuccess(false);
+					j.setMsg("提交本题失败");
+					return j;
+				}
+			}else{
+				j.setSuccess(true);
+				j.setMsg("提交本题成功");
+				return j;
+			}
+		}
+		return j;
+	}
+
+	@Override
+	public List<Solution> getSolutionsByNumber(int number) {
+		return solutionDao.getSolutionsByNumber(number);
+	}
+
+	@Override
+	public int editStudentScore(Solution solution) {
+		// TODO Auto-generated method stub
+		return solutionDao.editStudentScore(solution);
+	}
 
 	@Override
 	public List<PMSolution> exportExamLastCode(boolean isLast, int examId, String displaySequence, String studentNo,
@@ -1186,56 +1026,52 @@ public class SolutionServiceImpl implements SolutionServiceI {
 		return examStudentInfoList;
 	}
 
-//	@Override
-//	public Json WS_ItrainSubmitThisProblem(StudentTrainProbDetail stpd, PMSubmitProblemInfo WS_solution,String continueTrain) {
-//		Solution solution = null;
-//		Json j = new Json();
-//		if (stpd.getSolutionId() != null) {
-//			solution = getSolutionById(stpd.getSolutionId());
-//		} else {
-//			// 根据userId,examId,problemId以及Studentexamdetail的status在solution中查找ID值最大的solution
-//			solution = getLastSolutionByUserIdExamIdProblemIdAndStatus(WS_solution.getUserId(), WS_solution.getExamId(),
-//					WS_solution.getProblemId(), stpd.getStatus());
-//		}
-//		ItrainProbCatgory ipc = itrainProblemCatDao.getItrainProbCatgory(stpd.getExamId(), stpd.getCatId());
-//		Date deadline = ipc.getDeadline();
-//		Date submitTime = solution.getSubmitTime();
-//		if (deadline != null && submitTime.after(deadline)) {
-//			j.setSuccess(false);
-//			j.setMsg("本关截止时间已过，请点 我要通关 结束本关");
-//			return j;
-//		}
-//
-//		j = submitProblemCommon(WS_solution, solution);
-//		if(j.isSuccess()){
-//			if(WS_solution.isIfSubmit()){
-//				String res = submittedcodeService.itrainSubmitThisProblem(solution, stpd,continueTrain);
-//				// 正常的提交本题
-//				if (!(Constant.SUBMIT_FAILURE.equals(res))) {
-//					logger.info("用户ID为: " + WS_solution.getUserId() + "exam ID为:" + WS_solution.getExamId()
-//										+ " problem ID为: " + WS_solution.getProblemId() + "提交本题成功");
-//					j.setSuccess(true);
-//					j.setMsg("提交本题成功");
-//					return j;
-//				} else {
-//					logger.info("用户ID为: " + WS_solution.getUserId() + "exam ID为:" + WS_solution.getExamId()
-//										+ " problem ID为: " + WS_solution.getProblemId() + "提交本题失败");
-//					j.setSuccess(false);
-//					j.setMsg("提交本题失败");
-//					return j;
-//				}
-//			}else{
-//				j.setSuccess(true);
-//				j.setMsg("提交本题成功");
-//				return j;
-//			}
-//		}
-//		return j;
-//	}
-//
-//
-//	public Json submitProblemCommon(PMSubmitProblemInfo WS_solution,Solution solution){
-//		Json j = new Json();
+	@Override
+	public Json WS_ItrainSubmitThisProblem(StudentTrainProbDetail stpd, PMSubmitProblemInfo WS_solution,String continueTrain) {
+		Solution solution = null;
+		Json j = new Json();
+		if (stpd.getSolutionId() != null) {
+			solution = getSolutionById(stpd.getSolutionId());
+		} else {
+			// 根据userId,examId,problemId以及Studentexamdetail的status在solution中查找ID值最大的solution
+			solution = getLastSolutionByUserIdExamIdProblemIdAndStatus(WS_solution.getUserId(), WS_solution.getExamId(),
+					WS_solution.getProblemId(), stpd.getStatus());
+		}
+		ItrainProbCatgory ipc = itrainProblemCatDao.getItrainProbCatgory(stpd.getExamId(), stpd.getCatId());
+		Date deadline = ipc.getDeadline();
+		Date submitTime = solution.getSubmitTime();
+		if (deadline != null && submitTime.after(deadline)) {
+			j.setSuccess(false);
+			j.setMsg("本关截止时间已过，请点 我要通关 结束本关");
+			return j;
+		}
+
+		j = submitProblemCommon(WS_solution, solution);
+		if(j.isSuccess()){
+			if(WS_solution.isIfSubmit()){
+				String res = submittedcodeService.itrainSubmitThisProblem(solution, stpd,continueTrain);
+				// 正常的提交本题
+				if (!(Constant.SUBMIT_FAILURE.equals(res))) {
+					j.setSuccess(true);
+					j.setMsg("提交本题成功");
+					return j;
+				} else {
+					j.setSuccess(false);
+					j.setMsg("提交本题失败");
+					return j;
+				}
+			}else{
+				j.setSuccess(true);
+				j.setMsg("提交本题成功");
+				return j;
+			}
+		}
+		return j;
+	}
+	public Json submitProblemCommon(PMSubmitProblemInfo WS_solution,Solution solution){
+		Json j = new Json();
+		Exam exam = examDao.get(Exam.class, WS_solution.getExamId());
+		// !这里先不用缓存
 //		ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
 //		Exam exam = (Exam) examCacheManager.getObject("theExamById" + WS_solution.getExamId());
 //		if (exam == null) {
@@ -1243,45 +1079,45 @@ public class SolutionServiceImpl implements SolutionServiceI {
 //
 //			examCacheManager.putObject("theExamById" + WS_solution.getExamId(), exam);
 //		}
-//		// 如果必须要AC后才能提交代码，并且用户没有AC,则提示用户
-//		if (exam.isSubmitOnlyAC() && !solution.getStatus().equals(new String("AC"))) {
-//			j.setSuccess(false);
-//			j.setMsg("只能AC之后才能提交本题");
-//			return j;
-//		}else{
-//			// 无论是否抄袭都要更新similarity
-//			solution.setSimilarity(WS_solution.getSimilarity());
-//			// 如果相似度超过相似度的阈值了
-//			if (WS_solution.isOverSimilarity()) {
-//				// 如果抄袭了则更新solution表中的similarId
-//				solution.setSimilarId(WS_solution.getSimilarId());
-//				// 涉嫌抄袭之后，插入一条数据到similaritywarning表
-//				Similaritywarning similaritywarning = new Similaritywarning();
-//				similaritywarning.setSolutionId(solution.getId());
-//				similaritywarning.setWarningTime(new Date());
-//				similaritywarning.setSubmited(false);
-//				similaritywarningService.saveSimilaritywarning(similaritywarning);
-//				// 并提示用户涉嫌抄袭
-//			}
-//			updateSolution(solution);
-//			// 提交本题(包括不涉嫌抄袭提交和涉嫌抄袭提交)
-//			if (WS_solution.isIfSubmit()) {
-//				// 如果涉嫌之后坚持提交代码
-//				if (WS_solution.isOverSimilarity()) {
-//					// 更新similaritywarning表
-//					// 根据solutionID获取Similaritywarning
-//					Similaritywarning similaritywarning = similaritywarningService
-//										.getSimilaritywarningBySolutionId(solution.getId());
-//					// 设置已提交
-//					similaritywarning.setSubmited(true);
-//					similaritywarningService.updateSimilaritywarning(similaritywarning);
-//				}
-//			}
-//			j.setSuccess(true);
-//			return j;
-//		}
-//
-//	}
+		// 如果必须要AC后才能提交代码，并且用户没有AC,则提示用户
+		if (exam.isSubmitOnlyAC() && !solution.getStatus().equals(new String("AC"))) {
+			j.setSuccess(false);
+			j.setMsg("只能AC之后才能提交本题");
+			return j;
+		}else{
+			// 无论是否抄袭都要更新similarity
+			solution.setSimilarity(WS_solution.getSimilarity());
+			// 如果相似度超过相似度的阈值了
+			if (WS_solution.isOverSimilarity()) {
+				// 如果抄袭了则更新solution表中的similarId
+				solution.setSimilarId(WS_solution.getSimilarId());
+				// 涉嫌抄袭之后，插入一条数据到similaritywarning表
+				Similaritywarning similaritywarning = new Similaritywarning();
+				similaritywarning.setSolutionId(solution.getId());
+				similaritywarning.setWarningTime(new Date());
+				similaritywarning.setSubmited(false);
+				similaritywarningService.saveSimilaritywarning(similaritywarning);
+				// 并提示用户涉嫌抄袭
+			}
+			updateSolution(solution);
+			// 提交本题(包括不涉嫌抄袭提交和涉嫌抄袭提交)
+			if (WS_solution.isIfSubmit()) {
+				// 如果涉嫌之后坚持提交代码
+				if (WS_solution.isOverSimilarity()) {
+					// 更新similaritywarning表
+					// 根据solutionID获取Similaritywarning
+					Similaritywarning similaritywarning = similaritywarningService
+										.getSimilaritywarningBySolutionId(solution.getId());
+					// 设置已提交
+					similaritywarning.setSubmited(true);
+					similaritywarningService.updateSimilaritywarning(similaritywarning);
+				}
+			}
+			j.setSuccess(true);
+			return j;
+		}
+
+	}
 //
 //	@Override
 //	public Json submitItrainThisProblem(StudentTrainProbDetail stpd, PMWrongAndCorrectIds pMWrongAndCorrectIds, Json j,

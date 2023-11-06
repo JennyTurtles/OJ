@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="OJ2" />
+        <module name="api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -19,6 +20,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="OJ2" options="-parameters" />
+      <module name="api" options="-parameters" />
       <module name="exam" options="-parameters" />
       <module name="main" options="-parameters" />
       <module name="user" options="-parameters" />
