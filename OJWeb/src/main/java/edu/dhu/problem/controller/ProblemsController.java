@@ -4,13 +4,16 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ModelDriven;
 import edu.dhu.exam.dao.AdminusersDaoI;
 import edu.dhu.exam.model.Exam;
+import edu.dhu.exam.model.Studentexamdetail;
 import edu.dhu.exam.service.ExamServiceI;
+import edu.dhu.exam.service.StudentexamdetailServiceI;
 import edu.dhu.global.model.DecodeToken;
 import edu.dhu.global.model.RespBean;
 import edu.dhu.problem.model.*;
 import edu.dhu.problem.service.ExamproblemServiceI;
 import edu.dhu.problem.service.ProblemsServiceI;
 import edu.dhu.problem.service.SolutionServiceI;
+import edu.dhu.problem.service.StudentTrainProbDetailServiceI;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +48,10 @@ public class ProblemsController {
 	private ExamproblemServiceI examProblemService;
 	@Resource
 	private SolutionServiceI solutionService;
-//	private StudentTrainProbDetailServiceI studentTrainProbDetailService;
+	@Resource
+	private StudentTrainProbDetailServiceI studentTrainProbDetailService;
+	@Resource
+	private StudentexamdetailServiceI studentexamdetailService;
 //	private ProblemCommentsServiceI problemCommentsService;
 //
 //	public ExamproblemServiceI getExamProblemService() {
@@ -65,16 +71,6 @@ public class ProblemsController {
 //	@Autowired
 //	public void setExamProblemService(ExamproblemServiceI examProblemService) {
 //		this.examProblemService = examProblemService;
-//	}
-//
-//
-//	public StudentTrainProbDetailServiceI getStudentTrainProbDetailService() {
-//		return studentTrainProbDetailService;
-//	}
-//
-//	@Autowired
-//	public void setStudentTrainProbDetailService(StudentTrainProbDetailServiceI studentTrainProbDetailService) {
-//		this.studentTrainProbDetailService = studentTrainProbDetailService;
 //	}
 //
 //	public ProblemsServiceI getProblemsServiceI() {
@@ -697,22 +693,60 @@ public class ProblemsController {
 //		}
 //		super.writeJson(j);
 //	}
-//
 
-	@PostMapping("/getLastSolution")
-	public RespBean getLastSolution(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds,
-			HttpServletRequest request) {
+	// 判断是否能够点击提交本题按钮
+	@PostMapping("/isSubmitThisProblem")
+	public RespBean isSubmitThisProblem(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds, HttpServletRequest request) {
 		DecodeToken decodeToken = new DecodeToken(request);
 		String userId = decodeToken.getUserId();
+		// 根据userId,examId,problemId在solution中查找最新的solution
 		Solution solution = solutionService
 				.getLastSolutionByUserIdExamIdProblemId(
 						Integer.parseInt(userId),
 						pMWrongAndCorrectIds.getExamId(),
 						pMWrongAndCorrectIds.getProblemId());
-		if (solution != null) {
-			return RespBean.ok("获取之前的代码成功", solution);
+		if (solution == null) {
+			return RespBean.error("本题没有提交过代码，不可以提交本题。");
 		} else {
-			return RespBean.error("本题之前没有提交过");
+			//智能训练页面做题判断是否提交
+			// !暂时不知道catId的作用
+			int catId = 0;
+			if(catId != 0){
+				StudentTrainProbDetail stpd = studentTrainProbDetailService
+						.getStudentTrainProbDetail(Integer.parseInt(userId), pMWrongAndCorrectIds.getExamId(),
+								catId, pMWrongAndCorrectIds.getProblemId());
+				if(stpd.isFinished()){
+					return RespBean.error("不能重复提交");
+				}else{
+					return RespBean.ok("没有提交过本题，可以提交");
+				}
+			}else{
+				// 根据userid，examID，problemID在studentexamtail表中查找
+				Studentexamdetail studentexamdetail = studentexamdetailService
+						.getStatusByUserIDexamIDproblemId(
+								Integer.parseInt(userId),
+								pMWrongAndCorrectIds.getExamId(),
+								pMWrongAndCorrectIds.getProblemId());
+				if (studentexamdetail.isFinished()) {
+					return RespBean.error("不能重复提交");
+				} else {
+					return RespBean.ok("没有提交过本题，可以提交");
+				}
+			}
+		}
+	}
+
+	@PostMapping("/getProblemsStatusByIds")
+	public RespBean getProblemsStatusByIds(@RequestBody PMProblemsStatus pMProblemsStatus,HttpServletRequest request) {
+		DecodeToken decodeToken = new DecodeToken(request);
+		String userId = decodeToken.getUserId();
+		pMProblemsStatus.setUserId(Integer.parseInt(userId));
+		PMProblemsStatus problemsStatus = studentexamdetailService
+				.getProblemsStatusArrByIds(pMProblemsStatus);
+		if (problemsStatus != null) {
+			return RespBean.ok("根据ID数组查找状态成功。", problemsStatus);
+		} else {
+			return RespBean.error("根据ID数组查找状态失败。");
 		}
 	}
 }

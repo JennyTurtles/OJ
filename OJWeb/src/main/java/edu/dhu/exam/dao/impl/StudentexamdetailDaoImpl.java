@@ -87,8 +87,7 @@ public class StudentexamdetailDaoImpl extends BaseDaoImpl<Studentexamdetail>
 	@Override
 	public PMProblemsStatus getProblemsStatusArrByIds(
 			PMProblemsStatus pMProblemsStatus) {
-		PMProblemsStatus problemsStatus = pMProblemsStatus;
-		for (int i = 0; i < pMProblemsStatus.getProblemIdArr().length; i++) {
+        for (int i = 0; i < pMProblemsStatus.getProblemIdArr().length; i++) {
 			String hql = "from Studentexamdetail s where s.examId = "
 					+ pMProblemsStatus.getExamId() + " and s.userId = "
 					+ pMProblemsStatus.getUserId() + " and problemId = "
@@ -97,16 +96,16 @@ public class StudentexamdetailDaoImpl extends BaseDaoImpl<Studentexamdetail>
 			if (studentexamdetailList != null
 					&& studentexamdetailList.size() == 1) {
 				// 设置题目状态
-				problemsStatus.getStatusArr()[i] = studentexamdetailList.get(0)
+				pMProblemsStatus.getStatusArr()[i] = studentexamdetailList.get(0)
 						.getStatus();
 				// 设置Finish字段
-				problemsStatus.getFinishedArr()[i] = studentexamdetailList.get(
+				pMProblemsStatus.getFinishedArr()[i] = studentexamdetailList.get(
 						0).isFinished();
 			} else {
 				return null;
 			}
 		}
-		return problemsStatus;
+		return pMProblemsStatus;
 	}
 
 	@Override

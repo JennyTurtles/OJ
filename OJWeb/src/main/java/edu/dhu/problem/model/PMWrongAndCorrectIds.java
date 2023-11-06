@@ -1,9 +1,11 @@
 package edu.dhu.problem.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PMWrongAndCorrectIds implements java.io.Serializable {
 	private static final long serialVersionUID = 1538275279606L;
 
@@ -42,11 +44,11 @@ public class PMWrongAndCorrectIds implements java.io.Serializable {
 	}
 
 	public PMWrongAndCorrectIds(String submitType, int userId, int examId,
-                                int problemId, int solutionId, int wrongcasesId,
-                                int problemtestcasesId, String status, int submit, float score,
-                                String[] correctCaseIds, List<Wrongcases> wrongcases,
-                                String remark, boolean finished, int elapsedTime, String hintCases,
-                                String code, Date submitTime) {
+								int problemId, int solutionId, int wrongcasesId,
+								int problemtestcasesId, String status, int submit, float score,
+								String[] correctCaseIds, List<Wrongcases> wrongcases,
+								String remark, boolean finished, int elapsedTime, String hintCases,
+								String code, Date submitTime) {
 		super();
 		this.submitType = submitType;
 		this.userId = userId;

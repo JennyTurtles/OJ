@@ -17,6 +17,7 @@ import edu.dhu.global.service.LogServiceI;
 import edu.dhu.problem.dao.ExamproblemDaoI;
 import edu.dhu.problem.dao.ProblemCategoryDaoI;
 import edu.dhu.problem.model.Examproblems;
+import edu.dhu.problem.model.PMWrongAndCorrectIds;
 import edu.dhu.problem.model.Problems;
 import edu.dhu.problem.model.Solution;
 import edu.dhu.problem.service.ExamproblemServiceI;
@@ -449,6 +450,7 @@ public class SolutionController {
 		DecodeToken decodeToken = new DecodeToken(request);
 		String userId = decodeToken.getUserId();
 		String role = decodeToken.getRole();
+		solution.setUserid(Integer.parseInt(userId));
 		if (solution.getSourceCode().length() > 64000) {
 			return RespBean.error("代码长度不能超过64000个字符");
 		}
@@ -540,6 +542,22 @@ public class SolutionController {
 			// redisService.unLock(key);
 			// System.out.println(solution.getUserid() +
 			// "解锁了！！！！！！！！！！！！！！！！！！！！！" + Calendar.getInstance().getTime());
+		}
+	}
+	@PostMapping("/getLastSolution")
+	public RespBean getLastSolution(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds,
+									HttpServletRequest request) {
+		DecodeToken decodeToken = new DecodeToken(request);
+		String userId = decodeToken.getUserId();
+		Solution solution = solutionService
+				.getLastSolutionByUserIdExamIdProblemId(
+						Integer.parseInt(userId),
+						pMWrongAndCorrectIds.getExamId(),
+						pMWrongAndCorrectIds.getProblemId());
+		if (solution != null) {
+			return RespBean.ok("获取之前的代码成功", solution);
+		} else {
+			return RespBean.error("本题之前没有提交过");
 		}
 	}
 
