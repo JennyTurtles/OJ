@@ -4,16 +4,21 @@ import edu.dhu.exam.dao.ExamDaoI;
 import edu.dhu.exam.dao.ItrainProblemCatDaoI;
 import edu.dhu.exam.dao.StudentexamdetailDaoI;
 import edu.dhu.exam.dao.StudentexaminfoDaoI;
+import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.ExamStudent;
+import edu.dhu.exam.model.Studentexamdetail;
+import edu.dhu.global.model.Constant;
 import edu.dhu.problem.dao.ExamproblemDaoI;
 import edu.dhu.problem.dao.ProblemsDaoI;
+import edu.dhu.problem.dao.SimilaritywarningDaoI;
 import edu.dhu.problem.dao.SolutionDaoI;
-import edu.dhu.problem.model.Examproblems;
-import edu.dhu.problem.model.PMSolution;
-import edu.dhu.problem.model.Problems;
-import edu.dhu.problem.model.Solution;
+import edu.dhu.problem.model.*;
+import edu.dhu.problem.service.CheckSimilarityServiceI;
+import edu.dhu.problem.service.SimilaritywarningServiceI;
 import edu.dhu.problem.service.SolutionServiceI;
+import edu.dhu.solution.service.SubmittedcodeServiceI;
 import edu.dhu.user.dao.UserDaoI;
+import edu.dhu.user.model.Json;
 import edu.dhu.user.model.Users;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
@@ -21,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 @Service("solutionService")
@@ -39,6 +45,12 @@ public class SolutionServiceImpl implements SolutionServiceI {
 //	private SimilaritywarningServiceI similaritywarningService;
 //	private SubmittedcodeServiceI submittedcodeService;
 //	private CheckSimilarityServiceI checkSimilarityService;
+	@Resource
+	private CheckSimilarityServiceI checkSimilarityService;
+	@Resource
+	private SimilaritywarningServiceI similaritywarningService;
+	@Resource
+	private SubmittedcodeServiceI submittedcodeService;
 	private SolutionDaoI solutionDao;
 	private UserDaoI userDao;
 	private ExamproblemDaoI examproblemDao;
@@ -927,35 +939,24 @@ public class SolutionServiceImpl implements SolutionServiceI {
 //		return false;
 //	}
 
-//	@Override
-//	public Json submitThisProblem(Studentexamdetail studentexamdetail, PMWrongAndCorrectIds pMWrongAndCorrectIds,
-//			Json j, boolean isOverSimilarity) {
-//		// TODO Auto-generated method stub
-//		Solution solution = null;
-//		if (studentexamdetail.getSolutionId() != null) {
-//			solution = getSolutionById(studentexamdetail.getSolutionId());
-//		} else {
-//			// 根据userId,examId,problemId以及Studentexamdetail的status在solution中查找ID值最大的solution
-//			solution = getLastSolutionByUserIdExamIdProblemIdAndStatus(pMWrongAndCorrectIds.getUserId(),
-//					pMWrongAndCorrectIds.getExamId(), pMWrongAndCorrectIds.getProblemId(),
-//					studentexamdetail.getStatus());
-//		}
-//
-//		/*
-//		 * Examproblems examproblems = examproblemDao
-//		 * .getExamproblemsByExamIdAndProblemId(
-//		 * pMWrongAndCorrectIds.getExamId(),
-//		 * pMWrongAndCorrectIds.getProblemId()); Date deadline =
-//		 * examproblems.getDeadline(); Date submitTime =
-//		 * solution.getSubmitTime(); if (deadline != null &&
-//		 * submitTime.after(deadline)) { j.setSuccess(false);
-//		 * j.setMsg("提交时间已经晚于本题截止时间不能提交本题"); return j; }
-//		 */
-//
-//		// 如果是第一次提交。即只检查相似度，如果相似度超过阈值之后，将相似度值和另一个人的solutionID写入solution对应记录,只检查AC的
-//		if (pMWrongAndCorrectIds.getSubmitType().equals(Constant.SUBMIT_FIRST)) {
-//			// 首先根据examId获取submitOnlyAC属性
-//			// 根据examID查询该场考试的信息,先从缓冲中获取该场考试的信息
+	@Override
+	public Json submitThisProblem(Studentexamdetail studentexamdetail, PMWrongAndCorrectIds pMWrongAndCorrectIds,
+								  Json j, boolean isOverSimilarity) {
+		// TODO Auto-generated method stub
+		Solution solution = null;
+		if (studentexamdetail.getSolutionId() != null) {
+			solution = getSolutionById(studentexamdetail.getSolutionId());
+		} else {
+			// 根据userId,examId,problemId以及Studentexamdetail的status在solution中查找ID值最大的solution
+			solution = getLastSolutionByUserIdExamIdProblemIdAndStatus(pMWrongAndCorrectIds.getUserId(),
+					pMWrongAndCorrectIds.getExamId(), pMWrongAndCorrectIds.getProblemId(),
+					studentexamdetail.getStatus());
+		}
+
+		// 如果是第一次提交。即只检查相似度，如果相似度超过阈值之后，将相似度值和另一个人的solutionID写入solution对应记录,只检查AC的
+		if (pMWrongAndCorrectIds.getSubmitType().equals(Constant.SUBMIT_FIRST)) {
+			// 首先根据examId获取submitOnlyAC属性
+			// 根据examID查询该场考试的信息,先从缓冲中获取该场考试的信息
 //			ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
 //			Exam exam = (Exam) examCacheManager.getObject("theExamById" + pMWrongAndCorrectIds.getExamId());
 //			if (exam == null) {
@@ -963,85 +964,81 @@ public class SolutionServiceImpl implements SolutionServiceI {
 //
 //				examCacheManager.putObject("theExamById" + pMWrongAndCorrectIds.getExamId(), exam);
 //			}
-//			// 如果必须要AC后才能提交代码，并且用户没有AC,则提示用户
-//			if (exam.isSubmitOnlyAC() && !solution.getStatus().equals(new String("AC"))) {
-//				j.setSuccess(false);
-//				j.setMsg("只能AC之后才能提交本题");
-//				return j;
-//			} else {
-//				PMSimilarityObj pMSimilarityObj = new PMSimilarityObj();
-//				if (!solution.getStatus().equals(new String("AC"))) {// 不是AC不检查相似度
-//					pMSimilarityObj.setSelfSolutionId(solution.getId());
-//					pMSimilarityObj.setOverSimilarity(false);
-//					pMSimilarityObj.setSimilarityValue(-1);
-//				} else {
-//					// 根据solutionID，sourceCode，problemID获取包含超过相似度值，以及与哪一个solution相似的对象
-//					pMSimilarityObj = checkSimilarityService.checkSimilarityById(solution.getId(),
-//							solution.getSourceCode(), pMWrongAndCorrectIds.getProblemId());
-//				}
-//				// 相似度=-1表示该题不需要检查相似度
-//				if ((pMSimilarityObj.getSimilarityValue() != -1)) {
-//					// 更新solution表的相似度值
-//					solution.setSimilarId(pMSimilarityObj.getOtherSolutionId());
-//					solution.setSimilarity(pMSimilarityObj.getSimilarityValue());
-//					updateSolution(solution);
-//				}
-//				// 如果相似度超过相似度的阈值了
-//				if (pMSimilarityObj.isOverSimilarity()) {
-//					isOverSimilarity = true;
-//					// 涉嫌抄袭之后，插入一条数据到similaritywaring表
-//					Similaritywarning similaritywarning = new Similaritywarning();
-//					similaritywarning.setSolutionId(solution.getId());
-//					similaritywarning.setWarningTime(new Date());
-//					similaritywarning.setSubmited(false);
-//					similaritywarningService.saveSimilaritywarning(similaritywarning);
-//					// 并提示用户涉嫌抄袭
-//					j.setSuccess(true);
-//					j.setMsg("题目名:" + pMSimilarityObj.getProblemName() + " 涉嫌抄袭!");
-//					return j;
-//				} else {
-//					isOverSimilarity = false;
-//
-//				}
-//			}
-//		}
-//		// 如果是涉嫌抄袭之后坚持提交代码
-//		else {
-//			// 更新similaritywarning表
-//			// 根据solutionID获取Similaritywarning
-//			if (solution.getStatus().equals(new String("AC"))) {
-//				Similaritywarning similaritywarning = similaritywarningService
-//						.getSimilaritywarningBySolutionId(solution.getId());
-//				// 设置已提交
-//				similaritywarning.setSubmited(true);
-//				similaritywarningService.updateSimilaritywarning(similaritywarning);
-//			}
-//
-//			// TODO 发送邮件给老师
-//		}
-//
-//		// 如果第一次提交没有超过相似度，或者涉嫌抄袭之后坚持第二次提交，则正常的提交本题
-//		if ((pMWrongAndCorrectIds.getSubmitType().equals(Constant.SUBMIT_FIRST) && !isOverSimilarity)
-//				|| pMWrongAndCorrectIds.getSubmitType().equals(Constant.SUBMIT_SECOND)) {
-//			// 正常的提交本题
-//			if (submittedcodeService.submitThisProblem(solution, studentexamdetail)) {
-//				logger.info(
-//						"用户ID为: " + pMWrongAndCorrectIds.getUserId() + "exam ID为:" + pMWrongAndCorrectIds.getExamId()
-//								+ " problem ID为: " + pMWrongAndCorrectIds.getProblemId() + "提交本题成功");
-//				j.setSuccess(true);
-//				j.setMsg("提交本题成功");
-//				return j;
-//			} else {
-//				logger.info(
-//						"用户ID为: " + pMWrongAndCorrectIds.getUserId() + "exam ID为:" + pMWrongAndCorrectIds.getExamId()
-//								+ " problem ID为: " + pMWrongAndCorrectIds.getProblemId() + "提交本题失败");
-//				j.setSuccess(false);
-//				j.setMsg("提交本题失败");
-//				return j;
-//			}
-//		}
-//		return null;
-//	}
+			// !这里未使用缓存
+			Exam exam = examDao.get(Exam.class, pMWrongAndCorrectIds.getExamId());
+			// 如果必须要AC后才能提交代码，并且用户没有AC,则提示用户
+			if (exam.isSubmitOnlyAC() && !solution.getStatus().equals(new String("AC"))) {
+				j.setSuccess(false);
+				j.setMsg("只能AC之后才能提交本题");
+				return j;
+			} else {
+				PMSimilarityObj pMSimilarityObj = new PMSimilarityObj();
+				if (!solution.getStatus().equals(new String("AC"))) {// 不是AC不检查相似度
+					pMSimilarityObj.setSelfSolutionId(solution.getId());
+					pMSimilarityObj.setOverSimilarity(false);
+					pMSimilarityObj.setSimilarityValue(-1);
+				} else {
+					// 根据solutionID，sourceCode，problemID获取包含超过相似度值，以及与哪一个solution相似的对象
+					pMSimilarityObj = checkSimilarityService.checkSimilarityById(solution.getId(),
+							solution.getSourceCode(), pMWrongAndCorrectIds.getProblemId());
+				}
+				// 相似度=-1表示该题不需要检查相似度
+				if ((pMSimilarityObj.getSimilarityValue() != -1)) {
+					// 更新solution表的相似度值
+					solution.setSimilarId(pMSimilarityObj.getOtherSolutionId());
+					solution.setSimilarity(pMSimilarityObj.getSimilarityValue());
+					updateSolution(solution);
+				}
+				// 如果相似度超过相似度的阈值了
+				if (pMSimilarityObj.isOverSimilarity()) {
+					isOverSimilarity = true;
+					// 涉嫌抄袭之后，插入一条数据到similaritywaring表
+					Similaritywarning similaritywarning = new Similaritywarning();
+					similaritywarning.setSolutionId(solution.getId());
+					similaritywarning.setWarningTime(new Date());
+					similaritywarning.setSubmited(false);
+					similaritywarningService.saveSimilaritywarning(similaritywarning);
+					// 并提示用户涉嫌抄袭
+					j.setSuccess(true);
+					j.setMsg("题目名:" + pMSimilarityObj.getProblemName() + " 涉嫌抄袭!");
+					return j;
+				} else {
+					isOverSimilarity = false;
+
+				}
+			}
+		}
+		// 如果是涉嫌抄袭之后坚持提交代码
+		else {
+			// 更新similaritywarning表
+			// 根据solutionID获取Similaritywarning
+			if (solution.getStatus().equals(new String("AC"))) {
+				Similaritywarning similaritywarning = similaritywarningService
+						.getSimilaritywarningBySolutionId(solution.getId());
+				// 设置已提交
+				similaritywarning.setSubmited(true);
+				similaritywarningService.updateSimilaritywarning(similaritywarning);
+			}
+
+			// TODO 发送邮件给老师
+		}
+
+		// 如果第一次提交没有超过相似度，或者涉嫌抄袭之后坚持第二次提交，则正常的提交本题
+		if ((pMWrongAndCorrectIds.getSubmitType().equals(Constant.SUBMIT_FIRST) && !isOverSimilarity)
+				|| pMWrongAndCorrectIds.getSubmitType().equals(Constant.SUBMIT_SECOND)) {
+			// 正常的提交本题
+			if (submittedcodeService.submitThisProblem(solution, studentexamdetail)) {
+				j.setSuccess(true);
+				j.setMsg("提交本题成功");
+				return j;
+			} else {
+				j.setSuccess(false);
+				j.setMsg("提交本题失败");
+				return j;
+			}
+		}
+		return null;
+	}
 //
 //	@Override
 //	public Json WS_submitThisProblem(Studentexamdetail studentexamdetail, PMSubmitProblemInfo WS_solution) {

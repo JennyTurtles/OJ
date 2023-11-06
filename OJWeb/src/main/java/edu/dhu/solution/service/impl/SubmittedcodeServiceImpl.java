@@ -1,6 +1,9 @@
 package edu.dhu.solution.service.impl;
 import edu.dhu.exam.model.Studentexaminfo;
 import edu.dhu.global.model.Constant;
+import edu.dhu.global.model.Log;
+import edu.dhu.global.util.SimilarityByLine;
+import edu.dhu.problem.dao.SubmittedcodeDaoI;
 import edu.dhu.problem.model.Wrongcases;
 import edu.dhu.exam.dao.AdminusersDaoI;
 import edu.dhu.exam.dao.StudentexamdetailDaoI;
@@ -11,6 +14,7 @@ import edu.dhu.problem.dao.ProblemsDaoI;
 import edu.dhu.problem.dao.SolutionDaoI;
 import edu.dhu.problem.model.Problems;
 import edu.dhu.problem.model.Solution;
+import edu.dhu.problem.service.GradeProblemServiceI;
 import edu.dhu.solution.model.Submittedcode;
 import edu.dhu.solution.service.SubmittedcodeServiceI;
 import edu.dhu.user.model.Adminusers;
@@ -20,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +42,10 @@ public class SubmittedcodeServiceImpl implements SubmittedcodeServiceI {
 	private LogServiceI logService;
 //	private WrongcasesDaoI wrongcasesDao;
 	private AdminusersDaoI adminusersDao;
+	@Resource
+	private GradeProblemServiceI gradeProblemService;
+	@Resource
+	private SubmittedcodeDaoI submittedcodeDao;
 //	private StudentTrainProbDetailDaoI studentTrainProbDetailDao;
 //	private StudentTrainCatDetailDaoI studentTrainCatDetailDao;
 //	private ItrainproblemDaoI itrainproblemDao;
@@ -284,10 +293,6 @@ public class SubmittedcodeServiceImpl implements SubmittedcodeServiceI {
 		return null;
 	}
 
-	@Override
-	public boolean submitThisProblem(Solution solu, Studentexamdetail stuexamdetail) {
-		return false;
-	}
 
 	@Override
 	public Json submitCode(Problems problem, Solution solution,
@@ -364,113 +369,113 @@ public class SubmittedcodeServiceImpl implements SubmittedcodeServiceI {
 	}
 
 	// int userId, int examId, int problemId,String status
-//	@Override
-//	public boolean submitThisProblem(Solution solu,
-//			Studentexamdetail stuexamdetail) {
-//		try {
-//			int userId = solu.getUserid();
-//			int problemId = solu.getProblemId();
-//			int examId = solu.getExamId();
-//			Solution solution = solu;
-//			Studentexamdetail studentexamdetail = stuexamdetail;
-//			// 根据problemID获取problem
-//			Problems problems = problemsDao.findProblemById(problemId);
-//			int tid = problems.getTeacherId();
-//			// 根据教师Id获取教师信息
-//			Adminusers adminuser = adminusersDao.get(Adminusers.class, tid);
-//
-//			// 根据userID，examID在Studentexaminfo表中获取记录,如果不存在，则新创建
-//			Studentexaminfo studentexaminfo = studentexaminfoDao
-//					.getStudentexaminfoByUserIdAnExamId(userId, examId);
-//			studentexamdetail.setFinished(true);
-//			if (solution.getScore() <= 0) {
-//				// 重新计算分数
-//				float score = gradeProblemService
-//						.gradeProblemBySolution(solution);
-//				// 如果因为其他原因导致裁判机没有裁判而用户进入到提交本题
-//				if (score < 0) {
-//					return false;
-//				}
-//				studentexamdetail.setScore(score);
-//			} else {
-//				studentexamdetail.setScore(solution.getScore());
-//			}
-//
-//			studentexaminfo.setSubmit(studentexaminfo.getSubmit()
-//					+ studentexamdetail.getSubmit());
-//			studentexaminfo.setScore(studentexaminfo.getScore()
-//					+ solution.getScore());
-//			studentexaminfo.setElapsedTime(studentexamdetail.getElapsedTime());
-//			studentexaminfo.setSubmitTime(new Date());
-//			if (studentexamdetail.getStatus().equals(Constant.CODE_AC)) {
-//				studentexaminfo.setSolved(studentexaminfo.getSolved() + 1);
-//
-//				if (problems.getSolved() == null) {
-//					problems.setSolved(1);
-//				} else {
-//					// 设置这道题目的成功解决加1
-//					problems.setSolved(problems.getSolved() + 1);
-//				}
-//			}
-//			// 构造将要保存到Submittedcode表中的对象
-//			Submittedcode submittedcode = new Submittedcode();
-//			// 设置problemID
-//			submittedcode.setProblemId(solution.getProblemId());
-//			// 设置solutionID
-//			submittedcode.setSolutionId(solution.getId());
-//			// 设置schoolId
-//			submittedcode.setSchoolId(adminuser.getSchoolId());
-//			// 设置time
-//			submittedcode.setTime(new Date());
-//			// TODO 预先处理代码
-//			submittedcode.setProcessedCode1(SimilarityByLine
-//					.getPreProcessedCode(solution.getSourceCode()));
-//			// submittedcode.setProcessedCode2(SimilarityByLine.getPreProcessedCode(solution.getSourceCode()));
-//			// 更新studentexamdetail
-//			studentexamdetailDao.updateStudentexamdetail(studentexamdetail);
-//
-//			// 更新problems表
-//			problemsDao.updateProblems(problems);
-//
-//			// 设置考试排名
-//			studentexaminfo.setRank(studentexamdetail.getElapsedTime()
-//					+ studentexaminfo.getSubmit() * 30);
-//
-//			// 更新studentexaminfo表
-//			studentexaminfoDao.update(studentexaminfo);
-//
-//			// 保存到数据库
-//			boolean saveflag = false;
-//			saveflag = submittedcodeDao.saveSubmittedcode(submittedcode);
-//			return saveflag;
-//		} catch (Exception e) {
-//			String sOut = "";
-//			StackTraceElement[] trace = e.getStackTrace();
-//			for (StackTraceElement s : trace) {
-//				sOut += "\tat " + s + "\r\n";
-//			}
-//			// 异常信息最大记录19000个字符，数据库该字段最大为20K
-//			int count = sOut.length() > 19000 ? 19000 : sOut.length();
-//			sOut = sOut.substring(0, count - 1);
-//			int leng = e.getLocalizedMessage().length() > 1800 ? 1800 : e
-//					.getLocalizedMessage().length();
-//			String localMessage = "";
-//			if (e.getLocalizedMessage() != null) {
-//				localMessage = e.getLocalizedMessage().substring(0, leng - 1);
-//			}
-//			Log log = new Log();
-//			log.setType("代码提交");
-//			log.setOptime(new Date());
-//			log.setUserId(solu.getUserid());
-//			log.setUserType("student");
-//			log.setContent(sOut);
-//			log.setAbstractContent("学生id:" + solu.getUserid() + "考试id:"
-//					+ solu.getExamId() + "题目id:" + solu.getProblemId() + "\n"
-//					+ localMessage);
-//			logService.WriteLog(log);
-//			return false;
-//		}
-//	}
+	@Override
+	public boolean submitThisProblem(Solution solu,
+			Studentexamdetail stuexamdetail) {
+		try {
+			int userId = solu.getUserid();
+			int problemId = solu.getProblemId();
+			int examId = solu.getExamId();
+			Solution solution = solu;
+			Studentexamdetail studentexamdetail = stuexamdetail;
+			// 根据problemID获取problem
+			Problems problems = problemsDao.findProblemById(problemId);
+			int tid = problems.getTeacherId();
+			// 根据教师Id获取教师信息
+			Adminusers adminuser = adminusersDao.get(Adminusers.class, tid);
+
+			// 根据userID，examID在Studentexaminfo表中获取记录,如果不存在，则新创建
+			Studentexaminfo studentexaminfo = studentexaminfoDao
+					.getStudentexaminfoByUserIdAnExamId(userId, examId);
+			studentexamdetail.setFinished(true);
+			if (solution.getScore() <= 0) {
+				// 重新计算分数
+				float score = gradeProblemService
+						.gradeProblemBySolution(solution);
+				// 如果因为其他原因导致裁判机没有裁判而用户进入到提交本题
+				if (score < 0) {
+					return false;
+				}
+				studentexamdetail.setScore(score);
+			} else {
+				studentexamdetail.setScore(solution.getScore());
+			}
+
+			studentexaminfo.setSubmit(studentexaminfo.getSubmit()
+					+ studentexamdetail.getSubmit());
+			studentexaminfo.setScore(studentexaminfo.getScore()
+					+ solution.getScore());
+			studentexaminfo.setElapsedTime(studentexamdetail.getElapsedTime());
+			studentexaminfo.setSubmitTime(new Date());
+			if (studentexamdetail.getStatus().equals(Constant.CODE_AC)) {
+				studentexaminfo.setSolved(studentexaminfo.getSolved() + 1);
+
+				if (problems.getSolved() == null) {
+					problems.setSolved(1);
+				} else {
+					// 设置这道题目的成功解决加1
+					problems.setSolved(problems.getSolved() + 1);
+				}
+			}
+			// 构造将要保存到Submittedcode表中的对象
+			Submittedcode submittedcode = new Submittedcode();
+			// 设置problemID
+			submittedcode.setProblemId(solution.getProblemId());
+			// 设置solutionID
+			submittedcode.setSolutionId(solution.getId());
+			// 设置schoolId
+			submittedcode.setSchoolId(adminuser.getSchoolId());
+			// 设置time
+			submittedcode.setTime(new Date());
+			// TODO 预先处理代码
+			submittedcode.setProcessedCode1(SimilarityByLine
+					.getPreProcessedCode(solution.getSourceCode()));
+			// submittedcode.setProcessedCode2(SimilarityByLine.getPreProcessedCode(solution.getSourceCode()));
+			// 更新studentexamdetail
+			studentexamdetailDao.updateStudentexamdetail(studentexamdetail);
+
+			// 更新problems表
+			problemsDao.updateProblems(problems);
+
+			// 设置考试排名
+			studentexaminfo.setRank(studentexamdetail.getElapsedTime()
+					+ studentexaminfo.getSubmit() * 30);
+
+			// 更新studentexaminfo表
+			studentexaminfoDao.update(studentexaminfo);
+
+			// 保存到数据库
+			boolean saveflag = false;
+			saveflag = submittedcodeDao.saveSubmittedcode(submittedcode);
+			return saveflag;
+		} catch (Exception e) {
+			String sOut = "";
+			StackTraceElement[] trace = e.getStackTrace();
+			for (StackTraceElement s : trace) {
+				sOut += "\tat " + s + "\r\n";
+			}
+			// 异常信息最大记录19000个字符，数据库该字段最大为20K
+			int count = sOut.length() > 19000 ? 19000 : sOut.length();
+			sOut = sOut.substring(0, count - 1);
+			int leng = e.getLocalizedMessage().length() > 1800 ? 1800 : e
+					.getLocalizedMessage().length();
+			String localMessage = "";
+			if (e.getLocalizedMessage() != null) {
+				localMessage = e.getLocalizedMessage().substring(0, leng - 1);
+			}
+			Log log = new Log();
+			log.setType("代码提交");
+			log.setOptime(new Date());
+			log.setUserId(solu.getUserid());
+			log.setUserType("student");
+			log.setContent(sOut);
+			log.setAbstractContent("学生id:" + solu.getUserid() + "考试id:"
+					+ solu.getExamId() + "题目id:" + solu.getProblemId() + "\n"
+					+ localMessage);
+			logService.WriteLog(log);
+			return false;
+		}
+	}
 //
 //	@Override
 //	public Solution WS_ItrainsubmitCode(Problems problem, Solution solution, StudentTrainProbDetail stpd,

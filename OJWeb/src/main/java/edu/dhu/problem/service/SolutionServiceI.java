@@ -2,8 +2,11 @@ package edu.dhu.problem.service;
 
 
 import edu.dhu.exam.model.ExamStudent;
+import edu.dhu.exam.model.Studentexamdetail;
 import edu.dhu.problem.model.PMSolution;
+import edu.dhu.problem.model.PMWrongAndCorrectIds;
 import edu.dhu.problem.model.Solution;
+import edu.dhu.user.model.Json;
 
 import java.util.List;
 import java.util.Map;
@@ -99,9 +102,9 @@ public interface SolutionServiceI {
 	
 	public boolean isTrainSubmited(int solutionId);
 	
-//	public Json submitThisProblem(Studentexamdetail studentexamdetail,
-//			PMWrongAndCorrectIds pMWrongAndCorrectIds, Json j,
-//			boolean isOverSimilarity);
+	public Json submitThisProblem(Studentexamdetail studentexamdetail,
+								  PMWrongAndCorrectIds pMWrongAndCorrectIds, Json j,
+								  boolean isOverSimilarity);
 //
 //	public Json WS_submitThisProblem(Studentexamdetail studentexamdetail,
 //			PMSubmitProblemInfo WS_solution);

@@ -736,6 +736,7 @@ public class ProblemsController {
 		}
 	}
 
+	// 该函数会被前端每隔0.5秒轮询调用一次查询结果，猜测当statusArr不为QUEUE时，前端调用getAllWrongAndRightCases
 	@PostMapping("/getProblemsStatusByIds")
 	public RespBean getProblemsStatusByIds(@RequestBody PMProblemsStatus pMProblemsStatus,HttpServletRequest request) {
 		DecodeToken decodeToken = new DecodeToken(request);

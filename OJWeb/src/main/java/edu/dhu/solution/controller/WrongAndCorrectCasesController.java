@@ -175,7 +175,6 @@ public class WrongAndCorrectCasesController {
 //		}
 //	}
 
-	// 该函数会被前端轮询调用查询结果
 	// 获取学生提交的该题的所有错误的测试用例ID和正确的测试用例ID
 	@PostMapping("/getAllWrongAndRightCases")
 	public RespBean getAllWrongAndRightCases(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds, HttpServletRequest request) {

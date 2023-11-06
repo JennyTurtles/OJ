@@ -70,6 +70,7 @@ xsi:schemaLocation="
 				<value>edu.dhu.user.model</value>
 				<value>edu.dhu.problem.model</value>
 				<value>edu.dhu.global.model</value>
+				<value>edu.dhu.solution.model</value>
 			</list>
 		</property>
 	</bean>
