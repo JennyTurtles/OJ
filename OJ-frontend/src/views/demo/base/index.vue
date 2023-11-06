@@ -78,10 +78,10 @@ const handleDelete = function () {
 const loading = ref(false)
 function handleLogin() {
   loading.value = true
-  $message.loading('登陆中...')
+  $message.loading('登录中...')
   setTimeout(() => {
-    $message.error('登陆失败')
-    $message.loading('正在尝试重新登陆...')
+    $message.error('登录失败')
+    $message.loading('正在尝试重新登录...')
     setTimeout(() => {
       $message.success('登陆成功')
       loading.value = false

@@ -17,7 +17,6 @@
         <n-form-item path="name" :show-label="false" mb-10>
           <n-input
             v-model:value="loginInfo.name"
-            autofocus
             class="h-48 items-center text-16"
             placeholder="手机号/学号/邮箱地址"
             :maxlength="20"
@@ -44,8 +43,8 @@
        </n-form-item>
 
        <div  flex gap-x-50>
-        <n-button text color="white" p-10>注册</n-button>
-        <n-button text color="white" p-10>忘记密码</n-button>
+        <n-button text class="p-10 dark:color-white"  @click="()=>{$router.push({name:'Signup'}); $emit('close')}">注册</n-button>
+        <n-button text class="p-10 dark:color-white" @click="()=>{$router.push({name:'RePwInfo'}); emit('close')}">忘记密码</n-button>
       </div>
 
         <div mt-20>
@@ -150,7 +149,7 @@ async function handleLogin() {
     await formRef.value.validate()
     try {
       loading.value = true
-      $message.loading('正在验证...')
+      $message.loading('登录中...')
       const res = await props.login({ username: name, password: password.toString() })
       console.log(res);
       $message.success('登录成功')

@@ -21,9 +21,11 @@ import {  ref, reactive, onMounted } from 'vue'
 import { NButton, useMessage, useNotification } from "naive-ui";
 import api from '@/api/user';
 import ExamActions from './exam-actions.vue';
-import { getToken } from '@/utils';
+import { formatDateTime, getToken } from '@/utils';
 import { useUserStore } from '@/store';
 import { useRouter } from 'vue-router';
+
+
 
 
 const userStore = useUserStore()
@@ -47,9 +49,9 @@ const onStartExam = async (row)=>{
     try {
       const res = await api.takeExam({id})
       if(type == 'iTraining'){
-        router.push({name: 'Trainset', query:{examId: id}})
+        router.push({name: 'TrainList', query:{examId: id}})
       }else{
-        router.push({name: 'Problemset', query:{examId: id}})
+        router.push({name: 'ProblemList', query:{examId: id}})
       }
     } catch (err) {
       console.log(res);
@@ -80,11 +82,23 @@ const columns = [
   },{
     key: 'starttime',
     title: '开始时间',
-    width: '108'
+    width: '108',
+    render: (row) => {
+      if (!row['starttime']) {
+        return ''
+      }
+      return formatDateTime(row['starttime'])
+    }
   },{
     key: 'endtime',
     title: '结束时间',
-    width: '108'
+    width: '108',
+    render: (row) => {
+      if (!row['endtime']) {
+        return ''
+      }
+      return formatDateTime(row['endtime'])
+    }
   },{
     key: 'problemNum',
     title: '题目数量',
@@ -129,7 +143,7 @@ onMounted(()=>{
 const queryByPage = (currentPage)=>{
   loading.value = true
   api.getExamList({
-    params:{pageNum:currentPage-1, pageSize:paginationReactive.pageSize}
+    params:{pageNum:currentPage, pageSize:paginationReactive.pageSize}
   }).then((res) => {
     const {pageNum, pageSize, total, list} = res.data
     paginationReactive.page = pageNum

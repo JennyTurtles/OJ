@@ -138,7 +138,7 @@ const examList = [
 
 export default [
   {
-    url: '/api/exam',
+    url: '/api/exam/examList',
     method: 'get',
     response: (data = {}) => {
       const { pageNum, pageSize } = data.query

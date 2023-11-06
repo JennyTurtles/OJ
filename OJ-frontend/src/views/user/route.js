@@ -26,9 +26,9 @@ export default {
       },
     },
     {
-      name: 'Exam',
-      path: 'exam',
-      component: () => import('./exam/index.vue'),
+      name: 'ExamList',
+      path: 'exam-list',
+      component: () => import('./exam-list/index.vue'),
       meta: {
         title: '考试',
         icon: 'ic:baseline-table-view',
@@ -38,9 +38,9 @@ export default {
       },
     },
     {
-      name: 'Problemset',
-      path: 'problemset',
-      component: () => import('./problemset/index.vue'),
+      name: 'ProblemList',
+      path: 'problem-list',
+      component: () => import('./problem-list/index.vue'),
       meta: {
         title: '考试题目列表',
         icon: 'ic:baseline-table-view',
@@ -50,9 +50,9 @@ export default {
       },
     },
     {
-      name: 'Trainset',
-      path: 'trainset',
-      component: () => import('./trainset/index.vue'),
+      name: 'TrainList',
+      path: 'train-list',
+      component: () => import('./train-list/index.vue'),
       meta: {
         title: '训练题目列表',
         icon: 'ic:baseline-table-view',
@@ -62,9 +62,9 @@ export default {
       },
     },
     {
-      name: 'Class',
-      path: 'class',
-      component: () => import('./class/index.vue'),
+      name: 'TakeClass',
+      path: 'take-class',
+      component: () => import('./take-class/index.vue'),
       meta: {
         title: '加入班级',
         icon: 'ic:baseline-table-view',
@@ -95,6 +95,42 @@ export default {
         role: [],
         requireAuth: false,
         keepAlive: true,
+      },
+    },
+    {
+      name: 'RePwInfo',
+      path: 're-pw-info',
+      component: () => import('./re-pw-info/index.vue'),
+      meta: {
+        title: '学生重置密码',
+        icon: 'ic:baseline-table-view',
+        role: [],
+        requireAuth: false,
+        keepAlive: true,
+      },
+    },
+    {
+      name: 'ResetPassword',
+      path: 'reset-password',
+      component: () => import('./reset-password/index.vue'),
+      meta: {
+        title: '学生重置密码',
+        icon: 'ic:baseline-table-view',
+        role: [],
+        requireAuth: false,
+        keepAlive: true,
+      },
+    },
+    {
+      name: 'PersonSetting',
+      path: 'person-setting',
+      component: () => import('./person-setting/index.vue'),
+      meta: {
+        title: '个人设置',
+        icon: 'ic:baseline-table-view',
+        role: ['student'],
+        requireAuth: true,
+        keepAlive: false,
       },
     },
   ],

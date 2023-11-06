@@ -9,8 +9,6 @@ import {
 } from './routes'
 import { getToken, isAdminEnd, isNullOrWhitespace } from '@/utils'
 import { useUserStore, usePermissionStore } from '@/store'
-import { useRouter } from 'vue-router'
-import { useRoute } from 'vue-router'
 
 const isHash = import.meta.env.VITE_USE_HASH === 'true'
 export const router = createRouter({
