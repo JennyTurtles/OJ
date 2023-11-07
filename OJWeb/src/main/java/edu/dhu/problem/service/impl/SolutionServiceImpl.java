@@ -1,5 +1,6 @@
 package edu.dhu.problem.service.impl;
 
+import edu.dhu.cache.ExamCacheManager;
 import edu.dhu.exam.dao.ExamDaoI;
 import edu.dhu.exam.dao.ItrainProblemCatDaoI;
 import edu.dhu.exam.dao.StudentexamdetailDaoI;
@@ -801,15 +802,12 @@ public class SolutionServiceImpl implements SolutionServiceI {
 		if (pMWrongAndCorrectIds.getSubmitType().equals(Constant.SUBMIT_FIRST)) {
 			// 首先根据examId获取submitOnlyAC属性
 			// 根据examID查询该场考试的信息,先从缓冲中获取该场考试的信息
-//			ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
-//			Exam exam = (Exam) examCacheManager.getObject("theExamById" + pMWrongAndCorrectIds.getExamId());
-//			if (exam == null) {
-//				exam = examDao.get(Exam.class, pMWrongAndCorrectIds.getExamId());
-//
-//				examCacheManager.putObject("theExamById" + pMWrongAndCorrectIds.getExamId(), exam);
-//			}
-			// !这里未使用缓存
-			Exam exam = examDao.get(Exam.class, pMWrongAndCorrectIds.getExamId());
+			ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
+			Exam exam = (Exam) examCacheManager.getObject("theExamById" + pMWrongAndCorrectIds.getExamId());
+			if (exam == null) {
+				exam = examDao.get(Exam.class, pMWrongAndCorrectIds.getExamId());
+				examCacheManager.putObject("theExamById" + pMWrongAndCorrectIds.getExamId(), exam);
+			}
 			// 如果必须要AC后才能提交代码，并且用户没有AC,则提示用户
 			if (exam.isSubmitOnlyAC() && !solution.getStatus().equals(new String("AC"))) {
 				j.setSuccess(false);
@@ -1070,15 +1068,12 @@ public class SolutionServiceImpl implements SolutionServiceI {
 	}
 	public Json submitProblemCommon(PMSubmitProblemInfo WS_solution,Solution solution){
 		Json j = new Json();
-		Exam exam = examDao.get(Exam.class, WS_solution.getExamId());
-		// !这里先不用缓存
-//		ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
-//		Exam exam = (Exam) examCacheManager.getObject("theExamById" + WS_solution.getExamId());
-//		if (exam == null) {
-//			exam = examDao.get(Exam.class, WS_solution.getExamId());
-//
-//			examCacheManager.putObject("theExamById" + WS_solution.getExamId(), exam);
-//		}
+		ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
+		Exam exam = (Exam) examCacheManager.getObject("theExamById" + WS_solution.getExamId());
+		if (exam == null) {
+			exam = examDao.get(Exam.class, WS_solution.getExamId());
+			examCacheManager.putObject("theExamById" + WS_solution.getExamId(), exam);
+		}
 		// 如果必须要AC后才能提交代码，并且用户没有AC,则提示用户
 		if (exam.isSubmitOnlyAC() && !solution.getStatus().equals(new String("AC"))) {
 			j.setSuccess(false);

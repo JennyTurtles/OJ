@@ -2,6 +2,9 @@ package edu.dhu.problem.controller;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ModelDriven;
+import edu.dhu.cache.ExamCacheManager;
+import edu.dhu.cache.ExamproblemsCacheManager;
+import edu.dhu.cache.ProblemsCachManager;
 import edu.dhu.exam.dao.AdminusersDaoI;
 import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.Studentexamdetail;
@@ -130,16 +133,14 @@ public class ProblemsController {
 		List<PMProblems> problemsList = problemsServiceI.findAllProblemsByExamId(pMProblems.getExamId(), Integer.parseInt(userId),
 				false);
 		// 根据examID查询该场考试的信息,先从缓冲中获取该场考试的信息
-//		ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
-//		Exam exam = (Exam) examCacheManager.getObject("theExamById" + pMProblems.getExamId());
-//		System.out.println(exam);
-//		if (exam == null) {
-//			exam = examService.getExamById(pMProblems.getExamId());
-//			examCacheManager.putObject("theExamById" + pMProblems.getExamId(), exam);
-//			System.out.println(exam);
-//		}
-		// 此处未使用缓存
-		Exam exam = examService.getExamById(pMProblems.getExamId());
+		ExamCacheManager examCacheManager = ExamCacheManager.getInstance();
+		Exam exam = (Exam) examCacheManager.getObject("theExamById" + pMProblems.getExamId());
+		System.out.println(exam);
+		if (exam == null) {
+			exam = examService.getExamById(pMProblems.getExamId());
+			examCacheManager.putObject("theExamById" + pMProblems.getExamId(), exam);
+			System.out.println(exam);
+		}
 		// 返回前段页面的对象
 		PMExamProblemInfo pMExamProblemInfo = new PMExamProblemInfo();
 		pMExamProblemInfo.setProblemsList(problemsList);
@@ -192,25 +193,20 @@ public class ProblemsController {
 	// 根据题目ID获取题目信息
 	@PostMapping("/getProblemByIdAndExamId")
 	public RespBean getProblemByIdAndExamId(@RequestBody PMProblems pMProblems) {
-		// !不使用缓存
-//		ProblemsCachManager problemsCachManager = ProblemsCachManager.getInstance();
-//		PMProblemInfo problem = (PMProblemInfo) problemsCachManager.getObject("problemId" + pMProblems.getId());
-		PMProblemInfo problem = null;
+		ProblemsCachManager problemsCachManager = ProblemsCachManager.getInstance();
+		PMProblemInfo problem = (PMProblemInfo) problemsCachManager.getObject("problemId" + pMProblems.getId());
 		if (problem == null) {
 			problem = problemsServiceI.findProblemInfoById(pMProblems.getId());
-//			problemsCachManager.putObject("problemId" + pMProblems.getId(), problem);
-			// System.out.println(problem);
+			problemsCachManager.putObject("problemId" + pMProblems.getId(), problem);
 		}
-//		ExamproblemsCacheManager examProblemsCachManager = ExamproblemsCacheManager.getInstance();
-//		Examproblems examProblem = (Examproblems) examProblemsCachManager
-//				.getObject("examProblemId_" + pMProblems.getExamId() + "_" + pMProblems.getId());
-		// System.out.println(problem);
-		Examproblems examProblem = null;
+		ExamproblemsCacheManager examProblemsCachManager = ExamproblemsCacheManager.getInstance();
+		Examproblems examProblem = (Examproblems) examProblemsCachManager
+				.getObject("examProblemId_" + pMProblems.getExamId() + "_" + pMProblems.getId());
 		if (examProblem == null) {
 			examProblem = examProblemService.getExamproblemsByExamIdAndProblemId(pMProblems.getExamId(),
 					pMProblems.getId());
-//			examProblemsCachManager.putObject("examProblemId_" + pMProblems.getExamId() + "_" + pMProblems.getId(),
-//					examProblem);
+			examProblemsCachManager.putObject("examProblemId_" + pMProblems.getExamId() + "_" + pMProblems.getId(),
+					examProblem);
 		}
 		if (problem != null) {
 			if (examProblem != null) {

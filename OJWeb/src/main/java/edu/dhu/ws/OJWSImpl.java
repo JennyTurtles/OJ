@@ -1,6 +1,7 @@
 package edu.dhu.ws;
 
 
+import edu.dhu.cache.*;
 import edu.dhu.exam.dao.StudentexaminfoDaoI;
 import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.PMExam;
@@ -13,7 +14,7 @@ import edu.dhu.global.model.Log;
 import edu.dhu.global.service.LogServiceI;
 import edu.dhu.problem.model.*;
 import edu.dhu.problem.service.*;
-import edu.dhu.service.OJWS;
+//import edu.dhu.service.OJWS;
 import edu.dhu.solution.model.Submittedcode;
 import edu.dhu.solution.service.SubmittedcodeServiceI;
 import edu.dhu.user.model.Json;
@@ -103,14 +104,12 @@ public class OJWSImpl implements OJWS {
         String xmlString;
         OJWSUtil oj = new OJWSUtil();
         PMUser user = new PMUser();
-        user = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        user = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (user == null) {
-//            user = GetUser(userName, password);
-//            xmlString = oj.createXmlToString(user);
-//            wsusersCacheManager.putObject(userName + "-" + password, user);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        user = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (user == null) {
+            user = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, user);
+        }
         xmlString = oj.createXmlToString(user);
         return xmlString;
     }
@@ -120,7 +119,6 @@ public class OJWSImpl implements OJWS {
         PMUser userReturn = null;
         user.setUsername(userName);
         user.setPassword(password);
-        // UserServiceImpl userService = new UserServiceImpl();
         try {
             userReturn = userService.login(user);
         } catch (Exception e) {
@@ -151,13 +149,12 @@ public class OJWSImpl implements OJWS {
         List<PMExam> pmelist = new ArrayList();
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(username, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(username + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(username, password);
-//            wsusersCacheManager.putObject(username + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(username + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(username, password);
+            wsusersCacheManager.putObject(username + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             try {
                 pmelist = examService.getExamsByUserId(userReturn.getId());
@@ -180,27 +177,22 @@ public class OJWSImpl implements OJWS {
         // Exam exam = new Exam();
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             try {
-                Exam exam = examService.getExamById(examId);
-                xmlString = oj.ExamByIdToXml(exam);
-//                WSExamCacheManager examCacheManager = WSExamCacheManager.getInstance();
-//                // ExamCacheManager examCacheManager =
-//                // ExamCacheManager.getInstance();
-//                Exam exam = new Exam();
-//                xmlString = (String) examCacheManager.getObject("exam_" + examId);
-//                if (xmlString == null) {
-//                    exam = examService.getExamById(examId);
-//                    xmlString = oj.ExamByIdToXml(exam);
-//                    examCacheManager.putObject("exam_" + examId, xmlString);
-//                }
+                WSExamCacheManager examCacheManager = WSExamCacheManager.getInstance();
+                Exam exam = new Exam();
+                xmlString = (String) examCacheManager.getObject("exam_" + examId);
+                if (xmlString == null) {
+                    exam = examService.getExamById(examId);
+                    xmlString = oj.ExamByIdToXml(exam);
+                    examCacheManager.putObject("exam_" + examId, xmlString);
+                }
             } catch (Exception e) {
                 xmlString = "<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"no\"?><root><rspMsg>服务器错误，请稍后重试！</rspMsg><time>"
                         + timeStr + "</time></root>";
@@ -225,13 +217,12 @@ public class OJWSImpl implements OJWS {
         List<Problemtestcases> procasesList = new ArrayList();
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             String key = userReturn.getUsername() + userReturn.getId();
 
@@ -240,19 +231,14 @@ public class OJWSImpl implements OJWS {
 
             }
             try {
-                proInfo = problemsServiceI.findProblemInfoById(problemId);
-                procasesList = problemtestcasesServiceI.getProblemtestcasesByProblemId(problemId);
-                xmlString = oj.ProblemsListToXml(proInfo, procasesList);
-//                WSProblemsCachManager problemsCacheManager = WSProblemsCachManager.getInstance();
-//                // ProblemsCachManager problemsCacheManager =
-//                // ProblemsCachManager.getInstance();
-//                xmlString = (String) problemsCacheManager.getObject("examProblemId_" + examId + "_" + problemId);
-//                if (xmlString == null) {
-//                    proInfo = problemsServiceI.findProblemInfoById(problemId);
-//                    procasesList = problemtestcasesServiceI.getProblemtestcasesByProblemId(problemId);
-//                    xmlString = oj.ProblemsListToXml(proInfo, procasesList);
-//                    problemsCacheManager.putObject("examProblemId_" + examId + "_" + problemId, xmlString);
-//                }
+                WSProblemsCachManager problemsCacheManager = WSProblemsCachManager.getInstance();
+                xmlString = (String) problemsCacheManager.getObject("examProblemId_" + examId + "_" + problemId);
+                if (xmlString == null) {
+                    proInfo = problemsServiceI.findProblemInfoById(problemId);
+                    procasesList = problemtestcasesServiceI.getProblemtestcasesByProblemId(problemId);
+                    xmlString = oj.ProblemsListToXml(proInfo, procasesList);
+                    problemsCacheManager.putObject("examProblemId_" + examId + "_" + problemId, xmlString);
+                }
                 // 开始加密
             } catch (Exception e) {
                 e.printStackTrace();
@@ -285,13 +271,12 @@ public class OJWSImpl implements OJWS {
             OJWSUtil oj = new OJWSUtil();
             PMUser userReturn = new PMUser();
             try {
-                userReturn = GetUser(userName, password);
-//                WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//                userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//                if (userReturn == null) {
-//                    userReturn = GetUser(userName, password);
-//                    wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//                }
+                WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+                userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+                if (userReturn == null) {
+                    userReturn = GetUser(userName, password);
+                    wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+                }
                 if (userReturn.getRspMsg().equals("Success")) {
                     int userId = userReturn.getId();
                     Studentexaminfo examinfo = studentexaminfoDao.getStudentexaminfoByUserIdAnExamId(userReturn.getId(),
@@ -309,25 +294,18 @@ public class OJWSImpl implements OJWS {
                         examinfo.setRank(0);
                         examinfo.setFirstloginTime(new Date());
                         examinfo.setLoginUUID(loginuuid);
-
-                        // if (req.getRemoteAddr() != null) {
-                        // studentexaminfo.setLoginIp(req.getRemoteAddr());
                         studentexaminfoDao.save(examinfo);
-                        // }
 
                     }
-//                    WSExamproblemsCacheManager examproblemsCacheManager = WSExamproblemsCacheManager.getInstance();
-
+                    WSExamproblemsCacheManager examproblemsCacheManager = WSExamproblemsCacheManager.getInstance();
                     boolean flag = examService.checkExamByUserIdAndExamId(examId, userId);
                     if (flag) {
-                        examproblemsList = examproblemService.getProblemsInfoByExamId(examId);
-                        xmlString = oj.ExamproblemsInfoListToXml(examproblemsList);
-//                        xmlString = (String) examproblemsCacheManager.getObject("exam_" + examId);
-//                        if (xmlString == null) {
-//                            examproblemsList = examproblemService.getProblemsInfoByExamId(examId);
-//                            xmlString = oj.ExamproblemsInfoListToXml(examproblemsList);
-//                            examproblemsCacheManager.putObject("exam_" + examId, xmlString);
-//                        }
+                        xmlString = (String) examproblemsCacheManager.getObject("exam_" + examId);
+                        if (xmlString == null) {
+                            examproblemsList = examproblemService.getProblemsInfoByExamId(examId);
+                            xmlString = oj.ExamproblemsInfoListToXml(examproblemsList);
+                            examproblemsCacheManager.putObject("exam_" + examId, xmlString);
+                        }
                     } else {
                         xmlString = "<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"no\"?><root><rspMsg>该生不允许参加本场考试！</rspMsg><time>"
                                 + timeStr + "</time></root>";
@@ -460,27 +438,23 @@ public class OJWSImpl implements OJWS {
         List<Studentexamdetail> studentexamdetailList = new ArrayList();
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             try {
                 int userId = userReturn.getId();
-                studentexamdetailList = studentexamdetailServiceI
-                        .getAllStudentexamdetailListByUserIdAndExamId(userId, examId);
-                xmlString = oj.ExamdetailListToXml(studentexamdetailList);
-//                WSStudentexamdetailCacheManager studetailCacheManager = WSStudentexamdetailCacheManager.getInstance();
-//                xmlString = (String) studetailCacheManager.getObject("exam_" + examId + "_" + userId);
-//                if (xmlString == null) {
-//                    studentexamdetailList = studentexamdetailServiceI
-//                            .getAllStudentexamdetailListByUserIdAndExamId(userId, examId);
-//                    xmlString = oj.ExamdetailListToXml(studentexamdetailList);
-//                    studetailCacheManager.putObject("exam_" + examId + "_" + userId, xmlString);
-//                }
+                WSStudentexamdetailCacheManager studetailCacheManager = WSStudentexamdetailCacheManager.getInstance();
+                xmlString = (String) studetailCacheManager.getObject("exam_" + examId + "_" + userId);
+                if (xmlString == null) {
+                    studentexamdetailList = studentexamdetailServiceI
+                            .getAllStudentexamdetailListByUserIdAndExamId(userId, examId);
+                    xmlString = oj.ExamdetailListToXml(studentexamdetailList);
+                    studetailCacheManager.putObject("exam_" + examId + "_" + userId, xmlString);
+                }
             } catch (Exception e) {
                 xmlString = "<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"no\"?><root><rspMsg>服务器错误，请稍后重试！</rspMsg><time>"
                         + timeStr + "</time></root>";
@@ -501,13 +475,12 @@ public class OJWSImpl implements OJWS {
         List<Submittedcode> submittedcodeList = new ArrayList();
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             try {
                 int userId = userReturn.getId();
@@ -534,13 +507,12 @@ public class OJWSImpl implements OJWS {
         String xmlString = null;
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             try {
                 int userId = userReturn.getId();
@@ -565,13 +537,12 @@ public class OJWSImpl implements OJWS {
         String xmlString = null;
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             try {
                 int userId = userReturn.getId();
@@ -614,13 +585,12 @@ public class OJWSImpl implements OJWS {
         Solution solution = new Solution();
         try {
             PMUser userReturn = new PMUser();
-            userReturn = GetUser(userName, password);
-//            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//            userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//            if (userReturn == null) {
-//                userReturn = GetUser(userName, password);
-//                wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//            }
+            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+            userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+            if (userReturn == null) {
+                userReturn = GetUser(userName, password);
+                wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+            }
             int userId = userReturn.getId();
 
             if (userReturn.getRspMsg().equals("Success")) {
@@ -742,13 +712,12 @@ public class OJWSImpl implements OJWS {
             OJWSUtil oj = new OJWSUtil();
 
             PMUser userReturn = new PMUser();
-            userReturn = GetUser(userName, password);
-//            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//            userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//            if (userReturn == null) {
-//                userReturn = GetUser(userName, password);
-//                wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//            }
+            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+            userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+            if (userReturn == null) {
+                userReturn = GetUser(userName, password);
+                wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+            }
             if (userReturn.getRspMsg().equals("Success")) {
                 try {
                     int userId = userReturn.getId();
@@ -825,13 +794,12 @@ public class OJWSImpl implements OJWS {
         try {
             // //裁判机调用，验证管理员
             PMAdminusers pmAdminusers = null;
-            pmAdminusers = adminServiceI.getAdminuserByAccount(account);
-//            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//            pmAdminusers = (PMAdminusers) wsusersCacheManager.getObject(account + "-" + password);
-//            if (pmAdminusers == null) {
-//                pmAdminusers = adminServiceI.getAdminuserByAccount(account);
-//                wsusersCacheManager.putObject(account + "-" + password, pmAdminusers);
-//            }
+            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+            pmAdminusers = (PMAdminusers) wsusersCacheManager.getObject(account + "-" + password);
+            if (pmAdminusers == null) {
+                pmAdminusers = adminServiceI.getAdminuserByAccount(account);
+                wsusersCacheManager.putObject(account + "-" + password, pmAdminusers);
+            }
 
             if (pmAdminusers == null || !pmAdminusers.getPassword().equals(password)) {
                 xmlString = "<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"no\"?><root><rspMsg>failure, wrong username or password</rspMsg><time>"
@@ -939,13 +907,12 @@ public class OJWSImpl implements OJWS {
             String resultXml = Encrypt.decrypt("judge123", result);
 
             PMAdminusers pmAdminusers = null;
-            pmAdminusers = adminServiceI.getAdminuserByAccount(account);
-//            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//            pmAdminusers = (PMAdminusers) wsusersCacheManager.getObject(account + "-" + password);
-//            if (pmAdminusers == null) {
-//                pmAdminusers = adminServiceI.getAdminuserByAccount(account);
-//                wsusersCacheManager.putObject(account + "-" + password, pmAdminusers);
-//            }
+            WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+            pmAdminusers = (PMAdminusers) wsusersCacheManager.getObject(account + "-" + password);
+            if (pmAdminusers == null) {
+                pmAdminusers = adminServiceI.getAdminuserByAccount(account);
+                wsusersCacheManager.putObject(account + "-" + password, pmAdminusers);
+            }
 
             if (pmAdminusers == null || !pmAdminusers.getPassword().equals(password)) {
                 xmlString = "<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"no\"?><root><rspMsg>failure, wrong username or password</rspMsg><time>"
@@ -1061,13 +1028,12 @@ public class OJWSImpl implements OJWS {
          exam = examService.getExamById(examId);
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             try {
                 Studentexaminfo examinfo = studentexaminfoDao.getStudentexaminfoByUserIdAnExamId(userReturn.getId(),
@@ -1141,13 +1107,12 @@ public class OJWSImpl implements OJWS {
         List<Problemtestcases> procasesList = new ArrayList();
         OJWSUtil oj = new OJWSUtil();
         PMUser userReturn = new PMUser();
-        userReturn = GetUser(userName, password);
-//        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
-//        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
-//        if (userReturn == null) {
-//            userReturn = GetUser(userName, password);
-//            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
-//        }
+        WSUsersCacheManager wsusersCacheManager = WSUsersCacheManager.getInstance();
+        userReturn = (PMUser) wsusersCacheManager.getObject(userName + "-" + password);
+        if (userReturn == null) {
+            userReturn = GetUser(userName, password);
+            wsusersCacheManager.putObject(userName + "-" + password, userReturn);
+        }
         if (userReturn.getRspMsg().equals("Success")) {
             String key = userReturn.getUsername() + userReturn.getId();
 
@@ -1156,17 +1121,14 @@ public class OJWSImpl implements OJWS {
 
             }
             try {
-                proInfo = problemsServiceI.findProblemInfoById(problemId);
-                procasesList = problemtestcasesServiceI.getProblemtestcasesByProblemId(problemId);
-                xmlString = oj.ProblemsListToXml(proInfo, procasesList);
-//                WSProblemsCachManager problemsCacheManager = WSProblemsCachManager.getInstance();
-//                xmlString = (String) problemsCacheManager.getObject("judge_problemId_" + problemId);
-//                if (xmlString == null) {
-//                    proInfo = problemsServiceI.findProblemInfoById(problemId);
-//                    procasesList = problemtestcasesServiceI.getProblemtestcasesByProblemId(problemId);
-//                    xmlString = oj.ProblemsListToXml(proInfo, procasesList);
-//                    problemsCacheManager.putObject("judge_problemId_" + problemId, xmlString);
-//                }
+                WSProblemsCachManager problemsCacheManager = WSProblemsCachManager.getInstance();
+                xmlString = (String) problemsCacheManager.getObject("judge_problemId_" + problemId);
+                if (xmlString == null) {
+                    proInfo = problemsServiceI.findProblemInfoById(problemId);
+                    procasesList = problemtestcasesServiceI.getProblemtestcasesByProblemId(problemId);
+                    xmlString = oj.ProblemsListToXml(proInfo, procasesList);
+                    problemsCacheManager.putObject("judge_problemId_" + problemId, xmlString);
+                }
                 // 开始加密
             } catch (Exception e) {
                 e.printStackTrace();

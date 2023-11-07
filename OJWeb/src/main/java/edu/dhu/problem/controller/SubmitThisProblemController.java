@@ -129,7 +129,7 @@ public class SubmitThisProblemController {
 //		}
 //	}
 	 //用户提交本题
-	@PostMapping("/submitThisProblem")
+	@PostMapping("")
 	@Transactional(isolation=Isolation.SERIALIZABLE)
 	public RespBean submitThisProblem(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds, HttpServletRequest request) {
 		DecodeToken decodeToken = new DecodeToken(request);

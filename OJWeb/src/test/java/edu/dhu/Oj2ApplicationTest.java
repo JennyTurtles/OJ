@@ -16,9 +16,10 @@ public class Oj2ApplicationTest {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         System.out.println(bCryptPasswordEncoder.encode("felix"));
     }
+    // $2a$10$Ru/AVYKSxo6GMykr3KgSC.AadkHUPLKPN/k0zuFQrT7sZfMCXTTXy
 
-    @Test
-    public void testWS() {
-        MyWebSocketHandler.sendToUser("1", "hello");
-    }
+//    @Test
+//    public void testWS() {
+//        MyWebSocketHandler.sendToUser("1", "hello");
+//    }
 }

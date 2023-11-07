@@ -1,5 +1,7 @@
 package edu.dhu.problem.service.impl;
 
+import edu.dhu.cache.ExamproblemsCacheManager;
+import edu.dhu.cache.ProblemsCachManager;
 import edu.dhu.exam.dao.AdminusersDaoI;
 import edu.dhu.exam.dao.StudentexamdetailDaoI;
 import edu.dhu.problem.dao.ChapterDaoI;
@@ -121,16 +123,14 @@ public class ProblemsServiceImpl implements ProblemsServiceI {
 	@Override
 	public List<PMProblems> findAllProblemsByExamId(int examId, int userId, boolean firstLogin) {
 
-//		ProblemsCachManager problemsCachManager = ProblemsCachManager.getInstance();
-//		@SuppressWarnings("unchecked")
-//		List<PMProblems> pMProblems = (List<PMProblems>) problemsCachManager.getObject("examId" + examId);
-//		if (pMProblems == null) {
-//			pMProblems = problemsDao.findAllProblemsByExamId(examId);
-//			problemsCachManager.putObject("examId" + examId, pMProblems);
-//		}
+		ProblemsCachManager problemsCachManager = ProblemsCachManager.getInstance();
+		@SuppressWarnings("unchecked")
+		List<PMProblems> pMProblems = (List<PMProblems>) problemsCachManager.getObject("examId" + examId);
+		if (pMProblems == null) {
+			pMProblems = problemsDao.findAllProblemsByExamId(examId);
+			problemsCachManager.putObject("examId" + examId, pMProblems);
+		}
 
-        // 未使用缓存
-        List<PMProblems> pMProblems = problemsDao.findAllProblemsByExamId(examId);
 		// 从缓冲中根据examID获取所有的examproblemsList
 //		ExamproblemsCacheManager examproblemsManager = ExamproblemsCacheManager.getInstance();
 //		@SuppressWarnings("unchecked")
