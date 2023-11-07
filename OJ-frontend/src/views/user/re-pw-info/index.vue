@@ -3,11 +3,11 @@
     <div class="f-c-c w-full">
       <div class="max-w-900 w-full">
         <n-form  ref="formRef" :model="formValue" :rules="rules" class="flex flex-col mt-20 px-15" >
-          <n-form-item label="用户名" path="username">
-            <n-input v-model:value="formValue.username" placeholder="请输入用户名"></n-input>
+          <n-form-item label="登录账号" path="username">
+            <n-input v-model:value="formValue.username" placeholder="请输入登录账号"></n-input>
           </n-form-item>
           <n-form-item label="问题" path="question">
-            <n-input v-model:value="formValue.question" disabled ></n-input>
+            <n-input v-model:value="formValue.question" disabled placeholder="填入登录账号后自动获取"></n-input>
           </n-form-item>
           <n-form-item label="答案"  path="answer">
             <n-input v-model:value="formValue.answer" placeholder="请输入答案"></n-input>
@@ -22,15 +22,17 @@
 </template>
 
 <script setup>
-import { ref,reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { useRouter} from 'vue-router';
 import api from '@/api/user'
 
 const router = useRouter()
+const {username} = history.state
+console.log(username);
 
 const formRef =  ref(null)
 const formValue = ref({
-  username: '',
+  username: username||'',
   question: '',
   answer: '',
 });
@@ -38,14 +40,15 @@ const formValue = ref({
 
 
 const rules = ref({
-  username: [
-    { 
+  username: { 
+      key: 'username',
       required: true,
       trigger: 'blur',
       validator: async (rule, value) => {
         if(!value) {
           return Promise.reject(new Error("用户名不能为空"))
         }
+        console.log('trigger by validate');
         try {
           const res = await api.findStudentByusername({username:value})
           const {question} = res.data
@@ -62,7 +65,6 @@ const rules = ref({
         
       }
     },
-  ],
   answer: [{
     required: true,
     trigger: 'blur',
@@ -105,5 +107,22 @@ const submitForm = (e) => {
     
   })
 };
+
+onMounted(() => {
+  if(formValue.value.username){
+    console.log('run');
+    formRef.value?.validate((errors) => {
+            if (errors) {
+              console.error(errors);
+            }else{
+              console.log('yes');
+            }
+          }, (rule) => {
+      return rule?.key === "username";
+    })
+  }
+})
+
+
 </script>
 

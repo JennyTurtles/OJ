@@ -5,8 +5,8 @@
         <div class="flex-1 p-20 rounded-10" border="solid 1px #ccc">
           <h3 class="text-center m-b-20">修改信息</h3>
           <n-form  ref="userInfoRef" :model="userInfoValue" :rules="userInofRules"  label-placement="left" label-align="right" label-width="58px" :show-require-mark="false">
-            <n-form-item label="用户名" path="username">
-              <n-input v-model:value="userInfoValue.username" ></n-input>
+            <n-form-item label="登录账号" path="username">
+              <n-input v-model:value="userInfoValue.username" disabled></n-input>
             </n-form-item>
             <n-form-item label="学号" >
               <n-input :value="disabledValue.studentNo" disabled></n-input>

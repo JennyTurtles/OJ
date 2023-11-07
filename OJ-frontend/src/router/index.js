@@ -31,6 +31,8 @@ export async function resetRouter() {
       router.removeRoute(name)
     }
   })
+
+  await addDynamicRoutes()
 }
 
 export async function addDynamicRoutes() {

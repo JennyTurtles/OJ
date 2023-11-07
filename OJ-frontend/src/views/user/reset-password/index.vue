@@ -7,10 +7,10 @@
             {{ formValue.username }}
           </n-form-item>
           <n-form-item label="密码" path="password">
-            <n-input v-model:value="formValue.password" placeholder="请输入新密码" ></n-input>
+            <n-input  v-model:value="formValue.password" placeholder="请输入新密码" type="password"></n-input>
           </n-form-item>
           <n-form-item label="重复密码"  path="rePassword">
-            <n-input v-model:value="formValue.rePassword" placeholder="请输入相同密码"></n-input>
+            <n-input v-model:value="formValue.rePassword" placeholder="请输入相同密码" type="password"></n-input>
           </n-form-item>
           <n-form-item>
             <n-button type="primary" @click.prevent="submitForm">确认</n-button>

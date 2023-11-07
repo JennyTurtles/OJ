@@ -18,7 +18,7 @@
           <n-input
             v-model:value="loginInfo.name"
             class="h-48 items-center text-16"
-            placeholder="手机号/学号/邮箱地址"
+            placeholder="登录账号"
             :maxlength="20"
           >
             <template #prefix>

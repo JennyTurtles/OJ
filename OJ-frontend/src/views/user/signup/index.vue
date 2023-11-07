@@ -4,7 +4,7 @@
       <div class="max-w-900 w-full">
         <n-form  ref="formRef" :model="formValue" :rules="formRules" >
           <div class="grid md:grid-cols-2 md:gap-x-30">
-            <n-form-item label="选择学校" path="schoolId" >
+            <n-form-item label="选择学校（从下拉框选择）" path="schoolId" >
               <n-select v-model:value="formValue.schoolId"  filterable placeholder="请选择学校" :options="schoolOptions"/>
             </n-form-item>
             <n-form-item label="学号" path="studentNo" >
@@ -19,7 +19,7 @@
             <n-form-item label="邮箱" path="email" >
               <n-input v-model:value="formValue.email" placeholder="请输入邮箱"></n-input>
             </n-form-item>
-            <n-form-item label="手机号/邮箱（此为登录账号）" path="username" >
+            <n-form-item label="登录账号（建议为手机号/邮箱）" path="username" >
               <n-input v-model:value="formValue.username" placeholder="请输入账号名"></n-input>
             </n-form-item>
             <n-form-item label="密码" path="password">
@@ -99,14 +99,14 @@ const formRules = {
     trigger: ['blur']
   },
   email: { 
-      trigger: ['blur', 'change'] , 
-      validator: (rule, value)=> (!value || validateEmail(value)),
-      message: '请输入有效的邮箱'
+    trigger: ['blur', 'change'] , 
+    validator: (rule, value)=> (!value || validateEmail(value)),
+    message: '请输入有效的邮箱'
   },
-  username:{ required: true, 
-      trigger: ['blur', 'change'] , 
-      validator: (rule, value)=> (validatePhone(value) || validateEmail(value)),
-      message: '请输入有效的手机号/邮箱'
+  username:{ 
+    required: true, 
+    trigger: ['blur'] , 
+    message: '账号不能为空'
     },
   password:  { required: true, min: 6, message: '密码长度不能少于6位', trigger: 'blur' },
   confirmPassword: {
@@ -124,7 +124,7 @@ const loading = ref(false)
 
 
 const submitForm = () => {
-  
+  // router.push({name: 'RePwInfo', state:{username:"felix"}})
   formRef.value.validate(async (errors) => {
     if (!errors) {
       try {
@@ -149,7 +149,7 @@ const submitForm = () => {
             content: `你已经注册过一个用户，原来的用户名为：${username}，忘记密码请点击确认进入重置密码页面`,
             positiveText: "确认",
             negativeText: "取消",
-            onPositiveClick: () => {router.push({name: 'RePwInfo'})}
+            onPositiveClick: () => {router.push({name: 'RePwInfo', state:{username}})}
           })
         }
       } finally{
