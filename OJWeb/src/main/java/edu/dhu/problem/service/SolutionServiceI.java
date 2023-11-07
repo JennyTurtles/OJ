@@ -3,6 +3,7 @@ package edu.dhu.problem.service;
 
 import edu.dhu.exam.model.ExamStudent;
 import edu.dhu.exam.model.Studentexamdetail;
+import edu.dhu.global.model.RespBean;
 import edu.dhu.problem.model.*;
 import edu.dhu.user.model.Json;
 
@@ -135,4 +136,6 @@ public interface SolutionServiceI {
 	public List<Map<String,Object>> getTrainCopyListInfo(int examId, int teacherId, String role,
 			String studentNo, String name, String banji, float similarity,
 			String searchTime);
+
+	public RespBean getAllWrongAndRightCases(int userId, int examId, int problemId);
 }

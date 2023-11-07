@@ -31,12 +31,15 @@ import java.util.List;
 @Service("submittedcodeService")
 @Transactional
 public class SubmittedcodeServiceImpl implements SubmittedcodeServiceI {
+	@Resource
 	private SolutionDaoI solutionDao;
-//	private SubmittedcodeDaoI submittedcodeDao;
+	@Resource
 	private StudentexamdetailDaoI studentexamdetailDao;
+	@Resource
 	private StudentexaminfoDaoI studentexaminfoDao;
+	@Resource
 	private ProblemsDaoI problemsDao;
-//	private GradeProblemServiceI gradeProblemService;
+	@Resource
 	private LogServiceI logService;
 	@Resource
 	private WrongcasesDaoI wrongcasesDao;
@@ -46,231 +49,112 @@ public class SubmittedcodeServiceImpl implements SubmittedcodeServiceI {
 	private ItrainproblemDaoI itrainproblemDao;
 	@Resource
 	private StudentTrainProbDetailDaoI studentTrainProbDetailDao;
+	@Resource
 	private AdminusersDaoI adminusersDao;
 	@Resource
 	private GradeProblemServiceI gradeProblemService;
 	@Resource
 	private SubmittedcodeDaoI submittedcodeDao;
-//	private StudentTrainProbDetailDaoI studentTrainProbDetailDao;
-//	private StudentTrainCatDetailDaoI studentTrainCatDetailDao;
-//	private ItrainproblemDaoI itrainproblemDao;
-
-	@Autowired
-	public void setAdminusersDaoI(AdminusersDaoI adminusersDao) {
-		this.adminusersDao = adminusersDao;
-	}
-
-	public AdminusersDaoI getAdminusersDaoI() {
-		return adminusersDao;
-	}
-
-	@Autowired
-	public void setLogService(LogServiceI logService) {
-		this.logService = logService;
-	}
-
-	public LogServiceI getLogService() {
-		return logService;
-	}
-
-//	public SubmittedcodeDaoI getSubmittedcodeDao() {
-//		return submittedcodeDao;
-//	}
-//
-//	@Autowired
-//	public void setSubmittedcodeDao(SubmittedcodeDaoI submittedcodeDao) {
-//		this.submittedcodeDao = submittedcodeDao;
-//	}
-
-//	@Override
-//	public Submittedcode getSubmittedcodeBySolutionIdAndProblemId(
-//			int solutionId, int problemId) {
-//		return submittedcodeDao.getSubmittedcodeBySolutionIdAndProblemId(
-//				solutionId, problemId);
-//	}
-
-	public SolutionDaoI getSolutionDao() {
-		return solutionDao;
-	}
-
-	@Autowired
-	public void setSolutionDao(SolutionDaoI solutionDao) {
-		this.solutionDao = solutionDao;
-	}
-
-	public StudentexamdetailDaoI getStudentexamdetailDao() {
-		return studentexamdetailDao;
-	}
-
-	@Autowired
-	public void setStudentexamdetailDao(
-			StudentexamdetailDaoI studentexamdetailDao) {
-		this.studentexamdetailDao = studentexamdetailDao;
-	}
-
-	public StudentexaminfoDaoI getStudentexaminfoDao() {
-		return studentexaminfoDao;
-	}
-
-	@Autowired
-	public void setStudentexaminfoDao(StudentexaminfoDaoI studentexaminfoDao) {
-		this.studentexaminfoDao = studentexaminfoDao;
-	}
-
-	public ProblemsDaoI getProblemsDao() {
-		return problemsDao;
-	}
-
-	@Autowired
-	public void setProblemsDao(ProblemsDaoI problemsDao) {
-		this.problemsDao = problemsDao;
-	}
-
-//	public GradeProblemServiceI getGradeProblemService() {
-//		return gradeProblemService;
-//	}
-//
-//	@Autowired
-//	public void setGradeProblemService(GradeProblemServiceI gradeProblemService) {
-//		this.gradeProblemService = gradeProblemService;
-//	}
-//
-//	public StudentTrainProbDetailDaoI getStudentTrainProbDetailDao() {
-//		return studentTrainProbDetailDao;
-//	}
-//
-//	@Autowired
-//	public void setStudentTrainProbDetailDao(StudentTrainProbDetailDaoI studentTrainProbDetailDao) {
-//		this.studentTrainProbDetailDao = studentTrainProbDetailDao;
-//	}
-//
-//
-//	public Solution WS_submitCode(Problems problem, Solution solution,
-//			Studentexamdetail studentexamdetail, List<Wrongcases> wrongcases,
-//			Date now, Date startTime, Date endTime) {
-//
-//		Json json = new Json();
-//		json = submitCode(problem, solution, studentexamdetail, now, startTime,
-//				endTime);
-//		if (json.getMsg().equals("代码提交成功")) {
-//			// updateWrongCases();
-//			submitCodeCommon_updateWrongCases(wrongcases, solution);
-//			return solution;
-//		} else {
-//			solution.setId(-1);
-//			return solution;
-//		}
-//	}
-//
-//	@Override
-//	public Solution WS_updateResult(Problems problem, Solution solution,List<Wrongcases> wrongcases) {
-//		try {
-//			solutionDao.update(solution);
-//			problemsDao.updateProblems(problem);
-//			for (int i = 0; i < wrongcases.size(); i++) {
-//
-//				if (solution.getStatus().equals("WA")
-//						|| solution.getStatus().equals("PE")
-//						|| solution.getStatus().equals("RE")
-//						|| solution.getStatus().equals("TLE")) {
-//
-//					// Wrongcases wcs =
-//					// wrongcasesDao.getWrongcasesBysolutionIdAndCaseId(solution.getId(),
-//					// wrongcases.get(i).getCaseId());
-//					List<Wrongcases> wcsList = wrongcasesDao
-//							.getWrongcasesBySolutionID(solution.getId());
-//					Wrongcases wcs = new Wrongcases();
-//					boolean flag = false;
-//					for (int j = 0; j < wcsList.size(); j++) {
-//						if (wcsList.get(j).getCaseId()
-//								.equals(wrongcases.get(i).getCaseId())) {
-//							flag = true;
-//						}
-//					}
-//					if (flag) {
-//						wcs.setSolutionId(solution.getId());
-//						wcs.setCaseId(wrongcases.get(i).getCaseId());
-//						if (solution.getStatus().equals("WA")
-//								|| solution.getStatus().equals("PE")) {
-//							wcs.setOutput(wrongcases.get(i).getOutput());
-//						} else if (solution.getStatus().equals("RE")
-//								|| solution.getStatus().equals("TLE")) {
-//							wcs.setOutput(solution.getRemark());
-//						}
-//						wrongcasesDao.alterWrongcasesBysolutionIdAndCaseId(wcs);
-//					} else {
-//						wcs.setSolutionId(solution.getId());
-//						wcs.setCaseId(wrongcases.get(i).getCaseId());
-//						//过滤ansii值
-//						String output=wrongcases.get(i).getOutput();
-//						StringBuffer replaceResult = new StringBuffer();
-//				        int index = output.indexOf("&#");  //output:"abc&#0;def"
-//				        while (index >= 0) {
-//				            replaceResult.append(output.substring(0, index));//replaceResult:"abc"
-//				            output = output.substring(index + 2);//output:"0;def"
-//
-//				            int indexColon = output.indexOf(";");
-//				            if (indexColon < 0) {
-//				                replaceResult.append("&#");
-//				                break;
-//				            }
-//				            String num = output.substring(0, indexColon);//num:0
-//				            if (num.length() > 3) {
-//				                replaceResult.append("&#" + num + ";");
-//				            } else {
-//				                int number = 0;
-//				                try {
-//				                    number = Integer.parseInt(num);
-//				                    replaceResult.append(String.valueOf((char) (number)));
-//				                } catch (Exception e) {
-//				                    replaceResult.append("&#" + num + ";");
-//				                }
-//				            }
-//
-//				            output = output.substring(indexColon + 1);//output:"def"
-//				            index = output.indexOf("&#");
-//				        }
-//				        replaceResult.append(output);
-//				        //replaceResult.trimToSize(64000);
-//				        output = replaceResult.toString();
-//						wcs.setOutput(output);
-//						wrongcasesDao.save(wcs);
-//					}
-//
-//					/*
-//					 * if (wcs == null) { wcs = new Wrongcases();
-//					 * wcs.setSolutionId(solution.getId());
-//					 * wcs.setCaseId(wrongcases.get(i).getCaseId());
-//					 * wcs.setOutput(wrongcases.get(i).getOutput());
-//					 * wrongcasesDao.save(wcs); }else{ if
-//					 * (solution.getStatus().equals("WA") ||
-//					 * solution.getStatus().equals("PE") ) {
-//					 * wcs.setOutput(wrongcases.get(i).getOutput()); } else if (
-//					 * solution.getStatus().equals("RE") ||
-//					 * solution.getStatus().equals("TLE")) {
-//					 * wcs.setOutput(solution.getRemark()); }
-//					 * wrongcasesDao.update(wcs); }
-//					 */
-//
-//				}
-//
-//			}
-//
-//			/*if (solution.getId() >= studentexamdetail.getSolutionId()) {
-//				studentexamdetailDao.updateStudentexamdetail(studentexamdetail);
-//			}*/
-//			return solution;
-//		} catch (Exception e) {
-//			solution.setId(-1);
-//			return solution;
-//		}
-//	}
-
 	@Override
-	public Submittedcode getSubmittedcodeBySolutionIdAndProblemId(int solutionId, int problemId) {
-		return null;
+	public Submittedcode getSubmittedcodeBySolutionIdAndProblemId(
+			int solutionId, int problemId) {
+		return submittedcodeDao.getSubmittedcodeBySolutionIdAndProblemId(
+				solutionId, problemId);
 	}
+	public Solution WS_submitCode(Problems problem, Solution solution,
+			Studentexamdetail studentexamdetail, List<Wrongcases> wrongcases,
+			Date now, Date startTime, Date endTime) {
 
+		Json json = new Json();
+		json = submitCode(problem, solution, studentexamdetail, now, startTime,
+				endTime);
+		if (json.getMsg().equals("代码提交成功")) {
+			// updateWrongCases();
+			submitCodeCommon_updateWrongCases(wrongcases, solution);
+			return solution;
+		} else {
+			solution.setId(-1);
+			return solution;
+		}
+	}
+	@Override
+	public Solution WS_updateResult(Problems problem, Solution solution,List<Wrongcases> wrongcases) {
+		try {
+			solutionDao.update(solution);
+			problemsDao.updateProblems(problem);
+			for (int i = 0; i < wrongcases.size(); i++) {
+
+				if (solution.getStatus().equals("WA")
+						|| solution.getStatus().equals("PE")
+						|| solution.getStatus().equals("RE")
+						|| solution.getStatus().equals("TLE")) {
+					List<Wrongcases> wcsList = wrongcasesDao
+							.getWrongcasesBySolutionID(solution.getId());
+					Wrongcases wcs = new Wrongcases();
+					boolean flag = false;
+					for (int j = 0; j < wcsList.size(); j++) {
+						if (wcsList.get(j).getCaseId()
+								.equals(wrongcases.get(i).getCaseId())) {
+							flag = true;
+						}
+					}
+					if (flag) {
+						wcs.setSolutionId(solution.getId());
+						wcs.setCaseId(wrongcases.get(i).getCaseId());
+						if (solution.getStatus().equals("WA")
+								|| solution.getStatus().equals("PE")) {
+							wcs.setOutput(wrongcases.get(i).getOutput());
+						} else if (solution.getStatus().equals("RE")
+								|| solution.getStatus().equals("TLE")) {
+							wcs.setOutput(solution.getRemark());
+						}
+						wrongcasesDao.alterWrongcasesBysolutionIdAndCaseId(wcs);
+					} else {
+						wcs.setSolutionId(solution.getId());
+						wcs.setCaseId(wrongcases.get(i).getCaseId());
+						//过滤ansii值
+						String output=wrongcases.get(i).getOutput();
+						StringBuffer replaceResult = new StringBuffer();
+				        int index = output.indexOf("&#");  //output:"abc&#0;def"
+				        while (index >= 0) {
+				            replaceResult.append(output.substring(0, index));//replaceResult:"abc"
+				            output = output.substring(index + 2);//output:"0;def"
+
+				            int indexColon = output.indexOf(";");
+				            if (indexColon < 0) {
+				                replaceResult.append("&#");
+				                break;
+				            }
+				            String num = output.substring(0, indexColon);//num:0
+				            if (num.length() > 3) {
+				                replaceResult.append("&#" + num + ";");
+				            } else {
+				                int number = 0;
+				                try {
+				                    number = Integer.parseInt(num);
+				                    replaceResult.append(String.valueOf((char) (number)));
+				                } catch (Exception e) {
+				                    replaceResult.append("&#" + num + ";");
+				                }
+				            }
+
+				            output = output.substring(indexColon + 1);//output:"def"
+				            index = output.indexOf("&#");
+				        }
+				        replaceResult.append(output);
+				        //replaceResult.trimToSize(64000);
+				        output = replaceResult.toString();
+						wcs.setOutput(output);
+						wrongcasesDao.save(wcs);
+					}
+				}
+			}
+			return solution;
+		} catch (Exception e) {
+			solution.setId(-1);
+			return solution;
+		}
+	}
 
 	@Override
 	public Json submitCode(Problems problem, Solution solution,
@@ -334,16 +218,6 @@ public class SubmittedcodeServiceImpl implements SubmittedcodeServiceI {
 			j.setMsg("代码提交失败");
 			return j;
 		}
-	}
-
-	@Override
-	public Solution WS_submitCode(Problems problem, Solution solution, Studentexamdetail studentexamdetail, List<Wrongcases> wrongcases, Date now, Date startTime, Date endTime) {
-		return null;
-	}
-
-	@Override
-	public Solution WS_updateResult(Problems problem, Solution solution, List<Wrongcases> wrongcases) {
-		return null;
 	}
 
 	// int userId, int examId, int problemId,String status

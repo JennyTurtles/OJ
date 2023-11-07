@@ -1,6 +1,7 @@
 package edu.dhu.ws;
 
 
+import com.alibaba.fastjson2.JSON;
 import edu.dhu.cache.*;
 import edu.dhu.exam.dao.StudentexaminfoDaoI;
 import edu.dhu.exam.model.Exam;
@@ -10,6 +11,7 @@ import edu.dhu.exam.model.Studentexaminfo;
 import edu.dhu.exam.service.ExamLogServiceI;
 import edu.dhu.exam.service.ExamServiceI;
 import edu.dhu.exam.service.StudentexamdetailServiceI;
+import edu.dhu.exam.ws.SolutionWebSocketHandler;
 import edu.dhu.global.model.Log;
 import edu.dhu.global.service.LogServiceI;
 import edu.dhu.problem.model.*;
@@ -66,8 +68,8 @@ public class OJWSImpl implements OJWS {
     private ExamLogServiceI examlogService;
     @Resource
     private LogServiceI logService;
-//    @Resource
-//    private RedisServiceI redisService;
+    @Resource
+    SolutionWebSocketHandler solutionWebSocketHandler;
     @Resource
     private SolutionServiceI solutionService;
     @Resource
@@ -952,12 +954,18 @@ public class OJWSImpl implements OJWS {
                 if(solution.getId() >= studentexamdetail.getSolutionId())
                 	studentexamdetailService.updateStudentexamdetail(studentexamdetail);
             }
-      
+
             // 此处获取xml中wrongcases的caseId,output信息
             List<Wrongcases> wrongcases = new ArrayList();
             wrongcases = oj.SubmitCodeXmltoWrongcases(resultXml);
-            System.out.println("跟新的内容" + getexamuserIdSolution.getStatus());
             solution = submittedcodeService.WS_updateResult(problem, getexamuserIdSolution,wrongcases);
+
+            // **通过WebSocket通知用户结果**
+            PMWrongAndCorrectIds res = (PMWrongAndCorrectIds) solutionService.getAllWrongAndRightCases(solution.getUserid(), solution.getExamId(),solution.getProblemId()).getData();
+            if (res != null) {
+                String jsonString = JSON.toJSONString(res);
+                SolutionWebSocketHandler.sendToUser(solution.getUserid() + "", jsonString);
+            }
 
             if (solution.getId() == -1) {
                 xmlString = "<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"no\"?><root><rspMsg>Failure</rspMsg><time>"

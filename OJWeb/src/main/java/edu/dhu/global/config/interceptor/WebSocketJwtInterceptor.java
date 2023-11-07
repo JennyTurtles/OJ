@@ -1,6 +1,8 @@
 package edu.dhu.global.config.interceptor;
 
 import cn.hutool.core.util.StrUtil;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import edu.dhu.global.exception.Constants;
 import edu.dhu.global.exception.ServiceException;
@@ -27,9 +29,8 @@ public class WebSocketJwtInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         ServletServerHttpRequest serverHttpRequest = (ServletServerHttpRequest) request;
         //获取参数
-        String userId = serverHttpRequest.getServletRequest().getParameter("userId");
         String token = serverHttpRequest.getServletRequest().getParameter("token");
-        if(StrUtil.isBlank((token)) || StrUtil.isBlank((userId))){
+        if(StrUtil.isBlank(token)){
             return false;
         }
         try {
@@ -37,7 +38,17 @@ public class WebSocketJwtInterceptor implements HandshakeInterceptor {
         } catch (JWTVerificationException e) {
             return false;
         }
+        // 解析token，获取userId和userRole
+        String userId;
+        String userRole;
+        try {
+            userId = JWT.decode(token).getAudience().get(0);
+            userRole = JWT.decode(token).getClaims().get("role").asString();
+        } catch (JWTDecodeException j) {
+            throw new ServiceException(Constants.CODE_401, "token解析失败，请重新登录");
+        }
         attributes.put("userId", userId);
+        attributes.put("role", userRole);
         return true;
     }
 

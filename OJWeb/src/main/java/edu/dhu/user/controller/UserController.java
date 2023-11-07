@@ -533,7 +533,6 @@ public class UserController{
 			return RespBean.error("查询学生信息失败");
 		}
 	}
-//
 	@PostMapping("/confirmQuestionAnswer")
 	public RespBean confirmQuestionAnswer(@RequestBody PMUser user) {
 		Users pmuser = userService.findStudentByusername(user.getUsername());

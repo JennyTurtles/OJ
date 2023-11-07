@@ -9,7 +9,9 @@ import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.ExamStudent;
 import edu.dhu.exam.model.ItrainProbCatgory;
 import edu.dhu.exam.model.Studentexamdetail;
+import edu.dhu.exam.service.StudentexamdetailServiceI;
 import edu.dhu.global.model.Constant;
+import edu.dhu.global.model.RespBean;
 import edu.dhu.problem.dao.*;
 import edu.dhu.problem.model.*;
 import edu.dhu.problem.service.CheckSimilarityServiceI;
@@ -31,19 +33,15 @@ import java.util.*;
 @Service("solutionService")
 @Transactional
 public class SolutionServiceImpl implements SolutionServiceI {
+	@Resource
 	private SessionFactory sessionFactory;
+	@Resource
+	private GradeProblemServiceImpl gradeProblemService;
+	@Resource
+	private WrongcasesDaoI WrongcasesDao;
+	@Resource
+	private StudentexamdetailServiceI studentexamdetailService;
 
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
-//	private SimilaritywarningServiceI similaritywarningService;
-//	private SubmittedcodeServiceI submittedcodeService;
-//	private CheckSimilarityServiceI checkSimilarityService;
 	@Resource
 	private CheckSimilarityServiceI checkSimilarityService;
 	@Resource
@@ -1246,6 +1244,105 @@ public class SolutionServiceImpl implements SolutionServiceI {
 		List<Map<String,Object>>  trainCopyInfo = solutionDao.getTrainCopyListInfo(examId,teacherId, role,studentNo, name, banji, similarity,
 				searchTime);
 		return trainCopyInfo;
+	}
+
+	@Override
+	public RespBean getAllWrongAndRightCases(int userId, int examId, int problemId) {
+		// 根据userID，examID，problemID在studentexamdetail表中查找该条记录
+		Studentexamdetail studentexamdetail = studentexamdetailService.getStatusByUserIDexamIDproblemId(userId, examId,problemId);
+		// 如果没有不存在记录
+		if (studentexamdetail != null) {
+			Solution s = null;
+			if (studentexamdetail.getSolutionId() != null) {
+				s = getSolutionById(studentexamdetail
+						.getSolutionId());
+			} else {
+				// 根据userId,examId,problemId以及Studentexamdetail的status在solution中查找ID值最大的solution
+				s = getLastSolutionByUserIdExamIdProblemIdAndStatus(userId,examId,problemId,studentexamdetail.getStatus());
+			}
+			float score;
+			// 如果solution不为空,则代表用户提交了该题
+			if (s != null) {
+				if (s.getScore() > 0) {
+					score = s.getScore();
+				} else {
+					// 获取该题的所得的分数情况
+					score = gradeProblemService.gradeProblemBySolution(s);
+				}
+				// 根据solutionID查询该题所有的正确的测试用例
+				String[] correctCaseIds = getCorrectCaseIds(s.getId());
+				// 根据solutionID查询该题所有的错误的测试用例
+				List<Wrongcases> wrongcases =WrongcasesDao.getWrongcasesBySolutionID(s.getId());
+
+				PMWrongAndCorrectIds wrongAndCorrectIds = new PMWrongAndCorrectIds();
+				wrongAndCorrectIds.setExamId(examId);
+				wrongAndCorrectIds.setUserId(userId);
+				wrongAndCorrectIds.setProblemId(problemId);
+				wrongAndCorrectIds.setSolutionId(s.getId());
+				wrongAndCorrectIds.setCorrectCaseIds(correctCaseIds);
+				wrongAndCorrectIds.setWrongcases(wrongcases);
+				wrongAndCorrectIds.setStatus(studentexamdetail.getStatus());
+				// 如果分数出来了，则设置分数，返回页面
+				if (score >= 0) {
+					wrongAndCorrectIds.setScore(score);
+				}
+				// 设置提交次数
+				wrongAndCorrectIds.setSubmit(studentexamdetail.getSubmit());
+				// 设置remark
+				if (s.getRemark() != null
+						&& !s.getRemark().equals(new String(""))) {
+					wrongAndCorrectIds
+							.setRemark(switchStatusToRemark(studentexamdetail.getStatus())+ "\n具体信息如下:\n"+ s.getRemark());
+				} else {
+					wrongAndCorrectIds.setRemark(switchStatusToRemark(studentexamdetail.getStatus()));
+				}
+
+				return RespBean.ok("查询所有的正确和错误的测试用例成功",wrongAndCorrectIds);
+			} else {
+				PMWrongAndCorrectIds wrongAndCorrectIds = new PMWrongAndCorrectIds();
+				wrongAndCorrectIds.setStatus("");
+				wrongAndCorrectIds.setSubmit(0);
+				wrongAndCorrectIds.setScore(-1);
+				wrongAndCorrectIds.setCorrectCaseIds(null);
+				wrongAndCorrectIds.setWrongcases(null);
+				wrongAndCorrectIds.setRemark("");
+				return RespBean.ok("正确和错误的测试用例为空");
+			}
+		} else {
+			PMWrongAndCorrectIds wrongAndCorrectIds = new PMWrongAndCorrectIds();
+			wrongAndCorrectIds.setStatus("");
+			wrongAndCorrectIds.setSubmit(0);
+			wrongAndCorrectIds.setScore(-1);
+			wrongAndCorrectIds.setCorrectCaseIds(null);
+			wrongAndCorrectIds.setWrongcases(null);
+			wrongAndCorrectIds.setRemark("");
+			return RespBean.ok("正确和错误的测试用例为空");
+		}
+	}
+
+	private String switchStatusToRemark(String status) {
+		switch (status) {
+			case Constant.CODE_WAIT:
+				return Constant.REMARK_WAIT;
+			case Constant.CODE_QUEUE:
+				return Constant.REMARK_QUEUE;
+			case Constant.CODE_CE:
+				return Constant.REMARK_CE;
+			case Constant.CODE_TLE:
+				return Constant.REMARK_TLE;
+			case Constant.CODE_RE:
+				return Constant.REMARK_RE;
+			case Constant.CODE_WA:
+				return Constant.REMARK_WA;
+			case Constant.CODE_PE:
+				return Constant.REMARK_PE;
+			case Constant.CODE_OLE:
+				return Constant.REMARK_OLE;
+			case Constant.CODE_AC:
+				return Constant.REMARK_AC;
+			default:
+				return "";
+		}
 	}
 
 

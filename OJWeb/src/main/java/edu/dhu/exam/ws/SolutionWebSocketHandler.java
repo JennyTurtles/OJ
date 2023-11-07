@@ -2,6 +2,7 @@ package edu.dhu.exam.ws;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import edu.dhu.problem.service.SolutionServiceI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,7 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Slf4j
-public class MyWebSocketHandler extends TextWebSocketHandler {
+public class SolutionWebSocketHandler extends TextWebSocketHandler {
+    @Resource
+    private SolutionServiceI solutionService;
     private static AtomicInteger onlineNum = new AtomicInteger();
 
     /**
