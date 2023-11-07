@@ -1,7 +1,9 @@
 package edu.dhu.exam.ws;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import edu.dhu.exam.model.Studentexamdetail;
+import edu.dhu.problem.model.PMWrongAndCorrectIds;
 import edu.dhu.problem.service.SolutionServiceI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -52,17 +54,28 @@ public class SolutionWebSocketHandler extends TextWebSocketHandler {
             addOnlineCount();
         }
         session.sendMessage(new TextMessage("成功连接判题服务器！"));
+        session.sendMessage(new TextMessage("【模拟接受消息】将在2秒后收到服务端发来的信息..."));
+        Thread.sleep(2000);
+        PMWrongAndCorrectIds res = (PMWrongAndCorrectIds) solutionService.getAllWrongAndRightCases(Integer.parseInt(userId), 26,581).getData();
+        if (res != null) {
+            String jsonString = JSON.toJSONString(res);
+            sendToUser(userId, jsonString);
+        }else{
+            sendToUser(userId, "没有找到记录！");
+        }
         log.info("用户：【{}】成功连接判题服务器！当前在线人数：【{}】",userId,onlineNum);
+
     }
 
     // 接受客户端消息,似乎OJ用不到。
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        JSONObject jsonObject = JSON.parseObject(message.getPayload());
-        String toSid = jsonObject.getString("sid");
-        String msg = jsonObject.getString("message");
-        String userId = (String) session.getAttributes().get("userId");
-        sendToUser(toSid, String.format("用户：【%s】发来消息：【%s】",userId,msg));
+        sendToUser(session.getAttributes().get("userId").toString(), "服务端已收到你的消息："+message.getPayload());
+//        JSONObject jsonObject = JSON.parseObject(message.getPayload());
+//        String toSid = jsonObject.getString("sid");
+//        String msg = jsonObject.getString("message");
+//        String userId = (String) session.getAttributes().get("userId");
+//        sendToUser(toSid, String.format("用户：【%s】发来消息：【%s】",userId,msg));
     }
 
     @Override
