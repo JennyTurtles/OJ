@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Objects;
 
 import static edu.dhu.global.util.PasswordUtil.checkPassword;
@@ -512,7 +514,7 @@ public class UserController{
 				if (results) {
 					return RespBean.ok("添加学生注册信息成功");
 				} else {
-					return RespBean.error("添加学生注册信息失败");
+					return RespBean.error("用户名或学号已存在！");
 				}
 			}
 		} else {

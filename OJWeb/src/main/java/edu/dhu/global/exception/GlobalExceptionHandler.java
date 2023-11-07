@@ -29,9 +29,16 @@ public class GlobalExceptionHandler {
             return RespBean.error("未知错误");
     }
 
-
     @ExceptionHandler(AuthenticationException.class)
     public RespBean serviceException(AuthenticationException e) {
         return RespBean.error(e.getMessage());
+    }
+
+    @ExceptionHandler(SQLException.class)
+    public RespBean serviceException(SQLException e) {
+        if (e instanceof SQLIntegrityConstraintViolationException)
+            return RespBean.error("用户名或学号已存在！");
+        else
+            return RespBean.error("数据库错误");
     }
 }
