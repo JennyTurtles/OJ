@@ -10,6 +10,7 @@ import edu.dhu.exam.service.impl.ExamServiceImpl;
 import edu.dhu.global.model.CookieInfo;
 import edu.dhu.global.model.DecodeToken;
 import edu.dhu.global.model.RespBean;
+import edu.dhu.global.service.RedisServiceI;
 import edu.dhu.problem.model.Solution;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.transaction.annotation.Isolation;
@@ -35,7 +36,9 @@ public class ExamController {
     StudentexaminfoDaoI studentexaminfoDao;
     @Resource
     ExamLogServiceI examlogService;
-    private static Lock lockAddExamInfo = new ReentrantLock();
+    @Resource
+    RedisServiceI redisService;
+//    private static Lock lockAddExamInfo = new ReentrantLock();
 
     @GetMapping("sync_time")
     public RespBean syncTime(Integer examId) {
@@ -66,13 +69,20 @@ public class ExamController {
     @PostMapping("/addExamInfo")
     public RespBean addExamInfo(@RequestBody PMExam pMExam,HttpServletRequest req, HttpServletResponse response) // 添加信息到examinfo
     {
-        lockAddExamInfo.lock();
+//        lockAddExamInfo.lock();
         DecodeToken decodeToken = new DecodeToken(req);
         String userId = decodeToken.getUserId();
         String studentNo = decodeToken.getStudentNo();
         String key = "addExamInfo_" + userId;
         // redis分布式锁
-        int expire = 30; // 超时时间
+        try {
+            // 获取锁失败就结束
+            if (!redisService.lock(key, 30)) {
+                return RespBean.error("提交本题不能过快,请稍后重试");
+            }
+        } catch (Exception e) {
+            return RespBean.error("服务器错误,请重试");
+        }
         boolean locked = false;
         try {
 //            HttpServletRequest req = ServletActionContext.getRequest();
@@ -185,8 +195,8 @@ public class ExamController {
         } catch (Exception e) {
             return RespBean.error("本场考试不允许更换电脑，需要教师在本场考试的“学生管理”里点“允许换座”，才可更换电脑。如果是同一台电脑第二次进入考试，也请教师同样操作");
         } finally {
-            lockAddExamInfo.unlock();
-            // redisService.unLock(key);
+//            lockAddExamInfo.unlock();
+             redisService.unLock(key);
         }
         return RespBean.ok("成功保存信息！");
     }

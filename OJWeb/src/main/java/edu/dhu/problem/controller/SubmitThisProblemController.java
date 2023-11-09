@@ -9,6 +9,7 @@ import edu.dhu.global.model.DecodeToken;
 import edu.dhu.global.model.Log;
 import edu.dhu.global.model.RespBean;
 import edu.dhu.global.service.LogServiceI;
+import edu.dhu.global.service.RedisServiceI;
 import edu.dhu.problem.model.PMWrongAndCorrectIds;
 import edu.dhu.problem.service.ExamproblemServiceI;
 import edu.dhu.problem.service.ProblemsServiceI;
@@ -39,11 +40,8 @@ public class SubmitThisProblemController {
 
 	private static final long serialVersionUID = -2185834336935466790L;
 
-//    private UserServiceI userService;
-//	private ProblemsServiceI problemsService;
-//	private SubmittedcodeServiceI submittedcodeService;
-//	private CheckSimilarityServiceI checkSimilarityService;
-//	private ExamServiceI examService;
+	@Resource
+	RedisServiceI redisService;
 	@Resource
 	private SolutionServiceI solutionService;
 	@Resource
@@ -131,11 +129,24 @@ public class SubmitThisProblemController {
 	 //用户提交本题
 	@PostMapping("")
 	@Transactional(isolation=Isolation.SERIALIZABLE)
-	public RespBean submitThisProblem(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds, HttpServletRequest request) {
+	public RespBean submitThisProblem(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds, HttpServletRequest request) throws InterruptedException {
 		DecodeToken decodeToken = new DecodeToken(request);
 		String userId = decodeToken.getUserId();
 		pMWrongAndCorrectIds.setUserId(Integer.parseInt(userId));
-		lock.lock();// 获得锁
+		String key = "submitThisProblem_" + userId;
+		System.out.printf("key: %s\n", key);
+//		lock.lock();// 获得锁
+		// 只使用redis分布式锁
+		try {
+			// 获取锁失败就结束
+			if (!redisService.lock(key, 30)) {
+//				lock.unlock();
+				return RespBean.error("提交本题不能过快,请稍后重试");
+			}
+		} catch (Exception e) {
+//			lock.unlock();
+			return RespBean.error("服务器错误,请重试");
+		}
 		try {
 			boolean isOverSimilarity = false;
 			// 根据userID，examID，problemID在Studentexamdetail中查找获取studentexamdetail记录
@@ -189,8 +200,8 @@ public class SubmitThisProblemController {
 			logService.WriteLog(log);
 			return RespBean.error("服务器内部发生错误，请报告管理员。");
 		} finally {
-			lock.unlock();// 释放锁
-			
+			redisService.unLock(key);
+//			lock.unlock();// 释放锁
 		}
 	}
 	

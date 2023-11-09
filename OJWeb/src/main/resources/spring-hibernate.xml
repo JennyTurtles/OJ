@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
 xsi:schemaLocation="
 	http://www.springframework.org/schema/beans
@@ -115,4 +116,17 @@ xsi:schemaLocation="
 	<aop:config>
 		<aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice" />
 	</aop:config>
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxIdle" value="300"/>
+		<property name="maxTotal" value="600"/>
+		<property name="maxWaitMillis" value="1000"/>
+		<property name="testOnBorrow" value="true"/>
+	</bean>
+	<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="hostName" value="127.0.0.1"/>
+		<property name="port" value="6379"/>
+		<property name="password" value=""/>
+		<property name="poolConfig" ref="poolConfig"/>
+	</bean>
 </beans>
+
