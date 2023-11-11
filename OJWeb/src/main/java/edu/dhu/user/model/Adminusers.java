@@ -6,7 +6,7 @@ import javax.persistence.*;
  * Adminusers entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "adminusers", catalog = "gdoj")
+@Table(name = "adminusers")
 public class Adminusers implements java.io.Serializable {
 
 	/**

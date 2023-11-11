@@ -7,7 +7,7 @@ import java.util.Date;
  * Problems entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "problems", catalog = "gdoj")
+@Table(name = "problems")
 public class Problems implements java.io.Serializable {
 
 	// Fields

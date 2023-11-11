@@ -11,7 +11,7 @@ import java.util.Date;
  */
 @Entity
 @Data
-@Table(name = "exam", catalog = "gdoj")
+@Table(name = "exam")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Exam implements java.io.Serializable {
 

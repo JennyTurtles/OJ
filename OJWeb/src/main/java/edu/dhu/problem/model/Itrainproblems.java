@@ -3,7 +3,7 @@ package edu.dhu.problem.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "itrainproblems", catalog = "gdoj")
+@Table(name = "itrainproblems")
 public class Itrainproblems implements java.io.Serializable{
 
 	/**

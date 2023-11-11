@@ -7,10 +7,7 @@ import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.ItrainProbCatgory;
 import edu.dhu.exam.model.Studentexamdetail;
 import edu.dhu.global.model.Constant;
-import edu.dhu.problem.dao.ExamproblemDaoI;
-import edu.dhu.problem.dao.ProblemsDaoI;
-import edu.dhu.problem.dao.SolutionDaoI;
-import edu.dhu.problem.dao.StudentTrainProbDetailDaoI;
+import edu.dhu.problem.dao.*;
 import edu.dhu.problem.model.*;
 import edu.dhu.problem.service.GradeProblemServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,8 @@ public class GradeProblemServiceImpl implements GradeProblemServiceI {
 	private StudentTrainProbDetailDaoI studentTrainProbDetailDao;
 	@Resource
 	private ItrainProblemCatDaoI itrainProblemCatDao;
+	@Resource
+	private ItrainproblemDaoI itrainproblemDao;
 
 	@Override
 	public float gradeProblemBySolution(Solution solution) {
@@ -243,55 +242,50 @@ public class GradeProblemServiceImpl implements GradeProblemServiceI {
 
 	@Override
 	public float calculateItrainProblemPoints(StudentTrainProbDetail stpd, Date submitTime) {
-		return 0;
-	}
+		Date startTime = stpd.getStartTime();
+		ItrainProbCatgory ipc = itrainProblemCatDao.getItrainProbCatgory(stpd.getExamId(), stpd.getCatId());
+		//做题时间(min)
+		float duration = (submitTime.getTime() - startTime.getTime())/(1000*60);
+		//获取本题平均做题时间
+		Itrainproblems ip = itrainproblemDao.getItrainPro(stpd.getExamId(), stpd.getProblemId());
+		float average = ip.getDuration();
+		//本次提交次数
+		float submit = stpd.getSubmit();
+		//查看测试数据的个数
+		float viewNum;
+		if(stpd.getHintCases().equals("null hintCases"))
+			viewNum = 0;
+		else
+			viewNum = stpd.getHintCases().split(",").length;
 
-//	@Override
-//	public float calculateItrainProblemPoints(StudentTrainProbDetail stpd, Date submitTime) {
-//		Date startTime = stpd.getStartTime();
-//		ItrainProbCatgory ipc = itrainProblemCatDao.getItrainProbCatgory(stpd.getExamId(), stpd.getCatId());
-//		//做题时间(min)
-//		float duration = (submitTime.getTime() - startTime.getTime())/(1000*60);
-//		//获取本题平均做题时间
-//		Itrainproblems ip = itrainproblemDao.getItrainPro(stpd.getExamId(), stpd.getProblemId());
-//		float average = ip.getDuration();
-//		//本次提交次数
-//		float submit = stpd.getSubmit();
-//		//查看测试数据的个数
-//		float viewNum;
-//		if(stpd.getHintCases().equals("null hintCases"))
-//			viewNum = 0;
-//		else
-//			viewNum = stpd.getHintCases().split(",").length;
-//
-//
-//		//数据替换
-//		if(duration <= 0.8 * average)
-//			duration = (float) (0.8 * average);
-//		if(duration >= 3 * average)
-//			duration = 3 * average;
-//
-//		if(submit >= 5)
-//			submit = 5;
-//
-//		if(viewNum >= 1)
-//			viewNum = 1;
-//
-//		//数据归一化
-//		float duration_g = (float) ((duration-0.8*average)/(3*average-0.8*average));
-//		float submit_g = (submit-1) / 4;
-//		float testcase_g = viewNum/1;
-//
-//		float lowerlimit = ipc.getLowerLimit();
-//		float upperlimit = ipc.getUpperLimit();
-//
-//		float points = 1/lowerlimit-(duration_g*2+submit_g+testcase_g)/4*(1/lowerlimit-1/upperlimit);
-//
-//		//points保留5位小数，第6位往上升
-//		points = (float) (Math.ceil(points*100000)/100000);
-//
-//		return points;
-//	}
+
+		//数据替换
+		if(duration <= 0.8 * average)
+			duration = (float) (0.8 * average);
+		if(duration >= 3 * average)
+			duration = 3 * average;
+
+		if(submit >= 5)
+			submit = 5;
+
+		if(viewNum >= 1)
+			viewNum = 1;
+
+		//数据归一化
+		float duration_g = (float) ((duration-0.8*average)/(3*average-0.8*average));
+		float submit_g = (submit-1) / 4;
+		float testcase_g = viewNum/1;
+
+		float lowerlimit = ipc.getLowerLimit();
+		float upperlimit = ipc.getUpperLimit();
+
+		float points = 1/lowerlimit-(duration_g*2+submit_g+testcase_g)/4*(1/lowerlimit-1/upperlimit);
+
+		//points保留5位小数，第6位往上升
+		points = (float) (Math.ceil(points*100000)/100000);
+
+		return points;
+	}
 
 	@Override
 	public float calculateItrianCategoryScore(StudentTrainCatDetail stcd) {

@@ -114,9 +114,9 @@ public interface SolutionServiceI {
 
 	public Json WS_ItrainSubmitThisProblem(StudentTrainProbDetail stpd, PMSubmitProblemInfo WS_solution, String continueTrain);
 
-//	public Json submitItrainThisProblem(StudentTrainProbDetail stpd,
-//			PMWrongAndCorrectIds pMWrongAndCorrectIds, Json j,
-//			boolean isOverSimilarity,String continueTrain);
+	public Json submitItrainThisProblem(StudentTrainProbDetail stpd,
+			PMWrongAndCorrectIds pMWrongAndCorrectIds, Json j,
+			boolean isOverSimilarity,String continueTrain);
 	
 	
 	public List<Map<String,Object>> getExamSubmitSolutionInfo(boolean isLast, int examId,int teacherId,

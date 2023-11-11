@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "itrainprobcat", catalog = "gdoj")
+@Table(name = "itrainprobcat")
 public class ItrainProbCatgory implements java.io.Serializable{
 
 	/**

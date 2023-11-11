@@ -11,9 +11,11 @@ import edu.dhu.global.model.RespBean;
 import edu.dhu.global.service.LogServiceI;
 import edu.dhu.global.service.RedisServiceI;
 import edu.dhu.problem.model.PMWrongAndCorrectIds;
+import edu.dhu.problem.model.StudentTrainProbDetail;
 import edu.dhu.problem.service.ExamproblemServiceI;
 import edu.dhu.problem.service.ProblemsServiceI;
 import edu.dhu.problem.service.SolutionServiceI;
+import edu.dhu.problem.service.StudentTrainProbDetailServiceI;
 import edu.dhu.solution.service.SubmittedcodeServiceI;
 import edu.dhu.user.model.Json;
 import edu.dhu.user.service.UserServiceI;
@@ -51,6 +53,8 @@ public class SubmitThisProblemController {
 //	private ExamproblemServiceI examproblemService;
 	@Resource
 	private LogServiceI logService;
+	@Resource
+	private StudentTrainProbDetailServiceI studentTrainProbDetailService;
 //	private RedisServiceI redisService;
 //	private StudentTrainProbDetailServiceI studentTrainProbDetailService;
 //	private int catId;
@@ -206,86 +210,63 @@ public class SubmitThisProblemController {
 	}
 	
 	
-//	//智能训练提交本题
-//	@Transactional(isolation=Isolation.SERIALIZABLE)
-//	public void submitItrainThisProblem() {
-//		String key=null;
-//		// 返回前台的json数据
-//		Json j = new Json();
-//		// 如果session断掉了
-//		Map<String, Object> session = ActionContext.getContext()
-//				.getSession();
-//		SessionInfo sessionInfo = (SessionInfo) session.get("sessionInfo");
-//		if (sessionInfo == null) {
-//			j.setSuccess(false);
-//			j.setMsg("必须先登录才能提交本题。");
-//			super.writeJson(j);
-//			return;
-//		}
-//		String userName=sessionInfo.getLoginName();
-//		key = "submitThisProblem_" + userName;
-//
-//		lock.lock();// 获得锁
-//		// redis分布式锁
-//		int expire = 30; // 超时时间
-//
-//		try {
-//			boolean isOverSimilarity = false;
-//			StudentTrainProbDetail stpd = studentTrainProbDetailService.getStudentTrainProbDetail(pMWrongAndCorrectIds.getUserId(),
-//					pMWrongAndCorrectIds.getExamId(),
-//					catId, pMWrongAndCorrectIds.getProblemId());
-//			if(stpd == null){
-//				j.setSuccess(false);
-//				j.setMsg("必须先提交代码才能提交本题。");
-//				super.writeJson(j);
-//			}else if(stpd.isFinished()){
-//				j.setSuccess(false);
-//				j.setMsg("不能重复提交");
-//				super.writeJson(j);
-//			}else{
-//				Json json = solutionService.submitItrainThisProblem(
-//						stpd, pMWrongAndCorrectIds, j,
-//						isOverSimilarity,continueTrain);
-//				j.setSuccess(json.isSuccess());
-//				j.setMsg(json.getMsg());
-//				j.setObj(json.getObj());
-//				super.writeJson(j);
-//			}
-//		} catch (Exception e) {
-//			String sOut = "";
-//			StackTraceElement[] trace = e.getStackTrace();
-//			for (StackTraceElement s : trace) {
-//				sOut += "\tat " + s + "\r\n";
-//			}
-//			// 异常信息最大记录19000个字符，数据库该字段最大为20K
-//			int count = sOut.length() > 19000 ? 19000 : sOut.length();
-//			sOut = sOut.substring(0, count - 1);
-//			int leng = e.getLocalizedMessage().length() > 1800 ? 1800 : e
-//					.getLocalizedMessage().length();
-//			String localMessage = "";
-//			if (e.getLocalizedMessage() != null) {
-//				localMessage = e.getLocalizedMessage().substring(0, leng - 1);
-//			}
-//			Log log = new Log();
-//			log.setType("代码提交");
-//			log.setOptime(new Date());
-//			log.setUserId(pMWrongAndCorrectIds.getUserId());
-//			log.setUserType("student");
-//			log.setContent(sOut);
-//			log.setAbstractContent("学生id:" + pMWrongAndCorrectIds.getUserId()
-//					+ "考试id:" + pMWrongAndCorrectIds.getExamId() + "题目id:"
-//					+ pMWrongAndCorrectIds.getProblemId() + "\n" + localMessage);
-//			logService.WriteLog(log);
-//
-//			// 返回前台的json数据
-//			j = new Json();
-//			j.setSuccess(false);
-//			j.setMsg("服务器内部发生错误，请报告管理员。");
-//			super.writeJson(j);
-//		}finally {
-////			redisService.unLock(key);
-//			lock.unlock();// 释放锁
-//
-//		}
-//	}
+	//智能训练提交本题
+	@PostMapping("/submitItrainThisProblem")
+	@Transactional(isolation=Isolation.SERIALIZABLE)
+	public RespBean submitItrainThisProblem(@RequestBody PMWrongAndCorrectIds pMWrongAndCorrectIds, HttpServletRequest request) {
+		DecodeToken decodeToken = new DecodeToken(request);
+		String userId = decodeToken.getUserId();
+		pMWrongAndCorrectIds.setUserId(Integer.parseInt(userId));
+		lock.lock();// 获得锁
+		try {
+			boolean isOverSimilarity = false;
+			StudentTrainProbDetail stpd = studentTrainProbDetailService.getStudentTrainProbDetail(pMWrongAndCorrectIds.getUserId(),
+					pMWrongAndCorrectIds.getExamId(),
+					pMWrongAndCorrectIds.getCatId(), pMWrongAndCorrectIds.getProblemId());
+			if(stpd == null){
+				return RespBean.error("必须先提交代码才能提交本题。");
+			}else if(stpd.isFinished()){
+				return RespBean.error("不能重复提交");
+			}else{
+				Json j = new Json();
+				Json json = solutionService.submitItrainThisProblem(
+						stpd, pMWrongAndCorrectIds, j,
+						isOverSimilarity,pMWrongAndCorrectIds.getContinueTrain());
+				if (json.isSuccess())
+					return RespBean.ok(json.getMsg(),json.getObj());
+				else
+					return RespBean.error(json.getMsg(),json.getObj());
+			}
+		} catch (Exception e) {
+			String sOut = "";
+			StackTraceElement[] trace = e.getStackTrace();
+			for (StackTraceElement s : trace) {
+				sOut += "\tat " + s + "\r\n";
+			}
+			// 异常信息最大记录19000个字符，数据库该字段最大为20K
+			int count = sOut.length() > 19000 ? 19000 : sOut.length();
+			sOut = sOut.substring(0, count - 1);
+			int leng = e.getLocalizedMessage().length() > 1800 ? 1800 : e
+					.getLocalizedMessage().length();
+			String localMessage = "";
+			if (e.getLocalizedMessage() != null) {
+				localMessage = e.getLocalizedMessage().substring(0, leng - 1);
+			}
+			Log log = new Log();
+			log.setType("代码提交");
+			log.setOptime(new Date());
+			log.setUserId(pMWrongAndCorrectIds.getUserId());
+			log.setUserType("student");
+			log.setContent(sOut);
+			log.setAbstractContent("学生id:" + pMWrongAndCorrectIds.getUserId()
+					+ "考试id:" + pMWrongAndCorrectIds.getExamId() + "题目id:"
+					+ pMWrongAndCorrectIds.getProblemId() + "\n" + localMessage);
+			logService.WriteLog(log);
+			return RespBean.error("服务器内部发生错误，请报告管理员。");
+		}finally {
+//			redisService.unLock(key);
+			lock.unlock();// 释放锁
+
+		}
+	}
 }

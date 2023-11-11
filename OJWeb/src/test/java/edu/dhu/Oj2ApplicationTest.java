@@ -10,11 +10,11 @@ import javax.annotation.Resource;
 public class Oj2ApplicationTest {
     @Resource
     private RedisTemplate redisTemplate;
-//    @Test
-//    public void testBCryptPasswordEncoder() {
-//        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-//        System.out.println(bCryptPasswordEncoder.encode("felix"));
-//    }
+    @Test
+    public void testBCryptPasswordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        System.out.println(bCryptPasswordEncoder.encode("lsm20040724"));
+    }
     // $2a$10$Ru/AVYKSxo6GMykr3KgSC.AadkHUPLKPN/k0zuFQrT7sZfMCXTTXy
 
 //    @Test

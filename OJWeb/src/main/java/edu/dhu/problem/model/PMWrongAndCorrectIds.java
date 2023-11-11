@@ -39,6 +39,16 @@ public class PMWrongAndCorrectIds implements java.io.Serializable {
 	private String code;
 	// 本题提交时间
 	private Date submitTime;
+	private int catId;
+	private String continueTrain;
+
+	public String getContinueTrain() {
+		return continueTrain;
+	}
+
+	public void setContinueTrain(String continueTrain) {
+		this.continueTrain = continueTrain;
+	}
 
 	public PMWrongAndCorrectIds() {
 	}
@@ -68,6 +78,59 @@ public class PMWrongAndCorrectIds implements java.io.Serializable {
 		this.hintCases = hintCases;
 		this.code = code;
 		this.submitTime = submitTime;
+	}
+
+	public PMWrongAndCorrectIds(String submitType, int userId, int examId, int problemId, int solutionId, int wrongcasesId, int problemtestcasesId, String status, int submit, float score, String[] correctCaseIds, List<edu.dhu.problem.model.Wrongcases> wrongcases, String remark, boolean finished, int elapsedTime, String hintCases, String code, Date submitTime, int catId) {
+		this.submitType = submitType;
+		this.userId = userId;
+		this.examId = examId;
+		this.problemId = problemId;
+		this.solutionId = solutionId;
+		this.wrongcasesId = wrongcasesId;
+		this.problemtestcasesId = problemtestcasesId;
+		this.status = status;
+		this.submit = submit;
+		this.score = score;
+		this.correctCaseIds = correctCaseIds;
+		Wrongcases = wrongcases;
+		this.remark = remark;
+		this.finished = finished;
+		this.elapsedTime = elapsedTime;
+		this.hintCases = hintCases;
+		this.code = code;
+		this.submitTime = submitTime;
+		this.catId = catId;
+	}
+
+	public PMWrongAndCorrectIds(String submitType, int userId, int examId, int problemId, int solutionId, int wrongcasesId, int problemtestcasesId, String status, int submit, float score, String[] correctCaseIds, List<edu.dhu.problem.model.Wrongcases> wrongcases, String remark, boolean finished, int elapsedTime, String hintCases, String code, Date submitTime, int catId, String continueTrain) {
+		this.submitType = submitType;
+		this.userId = userId;
+		this.examId = examId;
+		this.problemId = problemId;
+		this.solutionId = solutionId;
+		this.wrongcasesId = wrongcasesId;
+		this.problemtestcasesId = problemtestcasesId;
+		this.status = status;
+		this.submit = submit;
+		this.score = score;
+		this.correctCaseIds = correctCaseIds;
+		Wrongcases = wrongcases;
+		this.remark = remark;
+		this.finished = finished;
+		this.elapsedTime = elapsedTime;
+		this.hintCases = hintCases;
+		this.code = code;
+		this.submitTime = submitTime;
+		this.catId = catId;
+		this.continueTrain = continueTrain;
+	}
+
+	public int getCatId() {
+		return catId;
+	}
+
+	public void setCatId(int catId) {
+		this.catId = catId;
 	}
 
 	public boolean isFinished() {
