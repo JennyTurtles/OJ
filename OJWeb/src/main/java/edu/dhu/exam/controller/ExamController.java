@@ -40,7 +40,7 @@ public class ExamController {
     RedisServiceI redisService;
 //    private static Lock lockAddExamInfo = new ReentrantLock();
 
-    @GetMapping("sync_time")
+    @GetMapping("syncTime")
     public RespBean syncTime(Integer examId) {
         Long res = examService.syncTime(examId);
         Map<String, Long> map = new HashMap<>();
