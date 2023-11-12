@@ -2,6 +2,7 @@ package edu.dhu.exam.controller;
 
 import com.opensymphony.xwork2.ActionContext;
 import edu.dhu.exam.dao.StudentexaminfoDaoI;
+import edu.dhu.exam.model.DataGrid;
 import edu.dhu.exam.model.Exam;
 import edu.dhu.exam.model.PMExam;
 import edu.dhu.exam.model.Studentexaminfo;
@@ -62,7 +63,12 @@ public class ExamController {
         DecodeToken decodeToken = new DecodeToken(request);
         String userId = decodeToken.getUserId();
         pMExam.setStudentId(Integer.parseInt(userId));
-        return RespBean.ok("获取考试列表成功！", examService.dataGrid(pMExam));
+        DataGrid dataGrid = examService.dataGrid(pMExam);
+        if (dataGrid != null) {
+            return RespBean.ok("获取考试列表成功！",dataGrid);
+        } else {
+            return RespBean.error("获取考试列表失败！");
+        }
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)

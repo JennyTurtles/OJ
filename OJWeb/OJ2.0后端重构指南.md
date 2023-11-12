@@ -10,12 +10,14 @@ Navicat
 
 Copilot（可选）
 
-## 准备工作
+## 快速开始
 
-1. 获取代码：git clone https://github.com/JennyTurtles/OJ.git
-2. 获取代码编辑权限：将GitHub账号发送给我，我来添加。
-3. 获取文档编辑权限：https://app.apifox.com/invite/project?token=uf4zyZdfEKS7cyWtAj9Nw
-4. 在resources文件夹下添加application.properties文件，该文件包含远程数据库配置信息，请勿上传到git上。
+1. 获取代码：SVN
+2. 获取文档编辑权限：https://app.apifox.com/invite/project?token=uf4zyZdfEKS7cyWtAj9Nw
+3. 在resources文件夹下添加application.properties文件(后文有)，该文件包含远程数据库配置信息，请勿上传到git上。
+4. 加载maven。
+5. 下载并启动xmemcached（如果重构的代码涉及到CacheManager），保证cache.properties中的address是正确的。
+6. 下载并启动redis（如果重构的代码涉及到redisService），保证redis.properties中的前三项是正确的。
 
 ## 项目结构
 
@@ -23,36 +25,66 @@ Copilot（可选）
 
 功能模块与功能模块之间尽可能少地相互引用，全局模块中存放工具类和常用实体类，可被功能模块引用。
 
-![image-20231026114332020](https://github.com/JennyTurtles/OJ/blob/main/OJWeb/pictures/1.png)
-
 ### 功能模块
 
 功能模块采用SSM结构，每个模块内均包含controller，dao，model，service这四个文件夹。
-
-![image-20231026120140058](https://github.com/JennyTurtles/OJ/blob/main/OJWeb/pictures/2.png)
 
 ### 全局模块
 
 全局模块包含aop（切面，能实现不修改原代码的情况下进行功能增强），config（全局配置，主要用于安全控制，用户认证），exception（全局异常处理），model（通用实体类，如响应体RespBean），util（工具类，如token解析工具）。
 
-![image-20231026120313276](https://github.com/JennyTurtles/OJ/blob/main/OJWeb/pictures/3.png)
-
 ### 配置文件
 
-- application.properties：主要为数据库配置，目前项目混用mybatis和hibernate两个DAO框架，因此需要在配置文件中对他们进行分别配置（url，username，password，name）。
+- application.properties：主要为数据库配置，目前项目混用mybatis和hibernate两个DAO框架。
 - spring-hibernate：hibernate的专用配置，不建议修改。
 
 ## 远程数据库
+
 建议统一使用远程数据库开发，方便共享数据，避免繁琐的数据库合并工作。
-- url：***
+
+- url：frp-car.top:26170
 - username：oj
-- password：***
+- password：12345678
 - name：gdoj
-- 注：该数据库可在外网使用，由于使用了内网穿透，远程数据库在进行增删改查时速度慢是正常现象。在晚上12点之后，速度会变得很慢，建议不要熬夜开发。🐶
+- 注：
+  - 该数据库可在外网使用，由于使用了内网穿透，远程数据库在进行增删改查时速度慢是正常现象。
+  - 在晚上12点之后，速度会变得很慢，建议不要熬夜开发。🐶
+
+试用账号：felix felix
+
+## Memcached缓存
+
+### 运行
+
+```text
+brew services start memcached
+```
+
+### 默认端口
+
+```
+11211
+```
+
+## Redis
+
+### 运行
+
+```
+brew services start redis
+```
+
+### 默认端口
+
+```
+6379
+```
 
 ## 版本控制
 
-使用git进行版本控制，仓库链接：https://github.com/JennyTurtles/OJ
+使用SVN进行版本控制
+
+https://106.15.36.190/svn/newOJ/
 
 ## 接口文档
 
@@ -193,7 +225,7 @@ OJ2.0中存在四种角色，分别为student，admin，assistant，teacher，�
          @PreAuthorize("hasAnyAuthority('student','admin','teacher','assistant')") // 用于权限管理，表示允许访问函数的角色，可以先不写。
          ```
 
-      2. OJ1.0中采用super.writeJson(j)将json传递给前端。OJ2.0中则通过返回RespBean。因此要将返回类型改为RespBean。
+      2. 返回类型修改为RespBean：OJ1.0中采用super.writeJson(j)将json传递给前端。OJ2.0中则通过返回RespBean。
 
       3. 修改形参：请求中会发送用户填写的注册信息，OJ1.0中直接将其存储到了user成员变量中，user的类型是PMUser，在OJ2.0中为了接受请求中的信息，需要在形参中使用PMUser对象接受。此外如果需要获取用户信息，形参还要加上HttpServletRequest request(具体见：用户认证与权限管理/用户信息)。代码如下：
 
@@ -309,7 +341,38 @@ adminusers表和users表字段名称设置比较不合理，如：
 
 要在token中放入更多信息，请在**genToken()**中设置。
 
-## 联系方式
+### hibernate.MappingException
 
-sygongrunze@126.com
+在spring-hibernate.xml的packagesToScan中添加实体类的映射。
 
+## application.properties
+
+```properties
+# database
+spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+jdbc_url=jdbc:mysql://frp-car.top:26170/gdoj?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+jdbc_username=oj
+jdbc_password=12345678
+
+validationQuery=SELECT 1
+hibernate.hbm2ddl.auto=update
+hibernate.show_sql=false
+hibernate.format_sql=false
+
+spring.main.allow-bean-definition-overriding=true
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
+
+# jwt
+jwt.secretKey=12345678
+server.port= 8082
+
+# dubbo
+spring.application.name=OJ2.0
+dubbo.protocol.name = dubbo
+dubbo.protocol.port = -1
+
+# redis
+spring.redis.port=6379
+spring.redis.host=localhost
+spring.redis.timeout=1000
+```
