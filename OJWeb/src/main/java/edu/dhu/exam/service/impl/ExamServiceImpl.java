@@ -50,11 +50,7 @@ public class ExamServiceImpl implements ExamServiceI {
                 long time1 = startTime.getTime();
                 long time2 = now.getTime();
                 long diff = time1 - time2;
-                // 计算分钟
-                long minute = diff / (60 * 1000);
-                // 计算秒
-                long second = diff / 1000 - (minute * 60);
-                return "还有" + minute + ":" + second;
+                return diff + "";
             } else if ((now.getTime() > startTime.getTime()) && (now.getTime() < endTime.getTime())) {
                 return "考试进行中";
             } else if (now.getTime() > endTime.getTime()) {
