@@ -1,8 +1,10 @@
 <template>
   <CommonPage show-footer >
-    训练页面
+    score only rank
   </CommonPage>
-  
 </template>
+
 <script setup>
+
+
 </script>

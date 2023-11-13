@@ -1,6 +1,6 @@
 <template>
   <CommonPage show-footer :showHeader="false">
-    <h2 text-center>加入班级</h2>
+    <div text-center>训练成绩页面</div>
   </CommonPage>
 </template>
 

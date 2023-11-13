@@ -1,5 +1,7 @@
 const Layout = () => import('@/layout/user-layout.vue')
 
+import { RouterView } from 'vue-router'
+
 export default {
   name: 'User',
   path: '/user',
@@ -25,42 +27,7 @@ export default {
         keepAlive: true,
       },
     },
-    {
-      name: 'ExamList',
-      path: 'exam-list',
-      component: () => import('./exam-list/index.vue'),
-      meta: {
-        title: '考试',
-        icon: 'ic:baseline-table-view',
-        role: ['student'],
-        requireAuth: true,
-        keepAlive: true,
-      },
-    },
-    {
-      name: 'ProblemList',
-      path: 'problem-list',
-      component: () => import('./problem-list/index.vue'),
-      meta: {
-        title: '考试题目列表',
-        icon: 'ic:baseline-table-view',
-        role: ['student'],
-        requireAuth: true,
-        keepAlive: false,
-      },
-    },
-    {
-      name: 'TrainList',
-      path: 'train-list',
-      component: () => import('./train-list/index.vue'),
-      meta: {
-        title: '训练题目列表',
-        icon: 'ic:baseline-table-view',
-        role: ['student'],
-        requireAuth: true,
-        keepAlive: false,
-      },
-    },
+
     {
       name: 'TakeClass',
       path: 'take-class',
@@ -132,6 +99,140 @@ export default {
         requireAuth: true,
         keepAlive: false,
       },
+    },
+    {
+      name: 'ExamList',
+      path: 'exam-list',
+      component: () => import('./exam-list/index.vue'),
+      meta: {
+        title: '考试列表',
+        icon: 'ic:baseline-table-view',
+        role: ['student'],
+        requireAuth: true,
+        keepAlive: true,
+      },
+    },
+
+    {
+      name: 'Contest',
+      path: 'contest/:examId',
+      component: RouterView,
+      meta: {
+        role: ['student'],
+        requireAuth: true,
+        keepAlive: false,
+      },
+      children: [
+        {
+          name: 'ContestIndex',
+          path: '',
+          component: () => import('./contest/index.vue'),
+          meta: {
+            title: '题目列表',
+            icon: 'ic:baseline-table-view',
+            role: ['student'],
+            requireAuth: true,
+            keepAlive: false,
+          },
+        },
+        {
+          name: 'ContestProblems',
+          path: 'problems',
+          component: RouterView,
+          meta: {
+            title: 'only rank',
+            icon: 'ic:baseline-table-view',
+            role: ['student'],
+            requireAuth: true,
+            keepAlive: false,
+          },
+          children: [
+            {
+              name: 'ContestProblemDetail',
+              path: ':problemId',
+              component: () => import('./contest/problem.vue'),
+              meta: {
+                title: '题目详情',
+                icon: 'ic:baseline-table-view',
+                role: ['student'],
+                requireAuth: true,
+                keepAlive: false,
+              },
+            },
+          ],
+        },
+        {
+          name: 'ContestScoreOnlyRank',
+          path: 'score-only-rank',
+          component: () => import('./contest/score-only-rank.vue'),
+          meta: {
+            title: 'only rank',
+            icon: 'ic:baseline-table-view',
+            role: ['student'],
+            requireAuth: true,
+            keepAlive: false,
+          },
+        },
+        {
+          name: 'ContestScoreRankStatus',
+          path: 'score-rank-status',
+          component: () => import('./contest/score-rank-status.vue'),
+          meta: {
+            title: 'rank status',
+            icon: 'ic:baseline-table-view',
+            role: ['student'],
+            requireAuth: true,
+            keepAlive: false,
+          },
+        },
+        {
+          name: 'ContestScoreTop10',
+          path: 'score-top10',
+          component: () => import('./contest/score-top10.vue'),
+          meta: {
+            title: 'top10',
+            icon: 'ic:baseline-table-view',
+            role: ['student'],
+            requireAuth: true,
+            keepAlive: false,
+          },
+        },
+      ],
+    },
+    {
+      name: 'Training',
+      path: 'training/:examId',
+      component: RouterView,
+      meta: {
+        role: ['student'],
+        requireAuth: true,
+      },
+      children: [
+        {
+          name: 'TrainingIndex',
+          path: '',
+          component: () => import('./training/index.vue'),
+          meta: {
+            title: '训练考试',
+            icon: 'ic:baseline-table-view',
+            role: ['student'],
+            requireAuth: true,
+            keepAlive: false,
+          },
+        },
+        {
+          name: 'TrainingScoreTrainRank',
+          path: 'score-train-rank',
+          component: () => import('./training/score-train-rank.vue'),
+          meta: {
+            title: '训练成绩',
+            icon: 'ic:baseline-table-view',
+            role: ['student'],
+            requireAuth: true,
+            keepAlive: false,
+          },
+        },
+      ],
     },
   ],
 }

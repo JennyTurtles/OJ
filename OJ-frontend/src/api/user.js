@@ -16,8 +16,11 @@ export default {
   updateUserPwd: (data) => request.post('/user/editUserPassword', data),
   signUser: (data) => request.post('/user/signUser', data, { noNeedToken: true }),
 
-  takeExam: (data) => request.post('/exam/take', data),
-  getSyncTime: () => request.get('/exam/sync_time'),
+  addExamInfo: (data) => request.post('/exam/addExamInfo', data),
+  getSyncTime: (config) => request.get('/exam/sync_time', config),
+
+  getProblemsList: (data) => request.post('/problems/getProblemsList', data),
+  getProblemByIdAndExamId: (data) => request.post('/problems/getProblemByIdAndExamId', data),
 
   // refreshToken: () => request.post('/auth/refreshToken', null, { noNeedTip: true }),
 }
