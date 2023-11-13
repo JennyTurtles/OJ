@@ -1,11 +1,10 @@
 <template>
-  <CommonPage show-footer>
-    Home Index
+  <CommonPage show-footer >
+    score top10
   </CommonPage>
 </template>
 
 <script setup>
-
 
 
 </script>

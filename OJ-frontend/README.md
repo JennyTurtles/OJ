@@ -2,25 +2,16 @@
 
 OJ2.0项目前端基于Vue3
 
-## 使用手册
 
 
-### Getting Started
+## 开始
 
-```shell
-# Recommended setup git autocrlf 为 false
-git config --global core.autocrlf false
 
-# Clone Project
-git clone 
-
-cd vue-naive-admin
-
-# Install dependencies(Recommended use pnpm: https://pnpm.io/zh/installation)
+Install dependencies(Recommended use pnpm: https://pnpm.io/zh/installation)
 npm i -g pnpm # Installed and can be ignored
 pnpm i # or npm i
 
-# Start
+
 pnpm dev
 ```
 
@@ -37,7 +28,7 @@ pnpm build:github
 pnpm build
 ```
 
-### Other
+
 
 ```shell
 # eslint check
@@ -55,62 +46,21 @@ pnpm cz
 
 
 
-
-## 样式
+## 技术栈
+Vue3
+https://vuejs.org/
+Pinia 
+https://pinia.web3doc.top/
+Naive UI
+https://www.naiveui.com/zh-CN/os-theme
 Unocss
+https://alfred-skyblue.github.io/unocss-docs-cn/
 
 
-## 身份认证和权限控制
-permission
 
 
-## 使用框架 
-Vite, Vue3, Pinia, Naive UI, axios, 
 
-
-### 图标的使用
-
-
-### Navie UI集成
-  $message
-  $dialog
-  ...
-
-### axios封装
-
-
-### Pinia做全局状态管理
-
-
-### Introduction
-
-[Vue Naive Admin](https://github.com/zclzone/vue-naive-admin) is a **completely open source free and commercially allowed ** admin template，Based on the latest technology stack of front-end such as `Vue3、Vite3、Pinia、Unocss and Naive UI`. Compared with other more popular backend management templates, this project is more concise, lightweight, fresh style, very low learning costs, ideal for small and medium-sized projects or personal projects.
-
-### Features
-
-- 🍒 Integrated [Naive UI](https://www.naiveui.com)，recommended by Evan You.
-- 🍑 Integrated login, logout and permission verification.
-- 🍐 Integrated multi-environment configuration, dev, test, production and github pages environments.
-- 🍎 Integrated `eslint + prettier`.
-- 🍌 Integrated `husky + commitlint`.
-- 🍉 Integrated `Mock`.
-- 🍍 Integrated `pinia`，lightweight, simple and easy to use alternative to vuex.
-- 📦 Integrated `unplugin` auto import.
-- 🤹 Integrated `iconify` icon，support custom svg icons.
-- 🍇 Integrated `unocss`.
-
-### Preview
-
-[https://template.isme.top](https://template.isme.top)
-
-[https://base.isme.top](https://base.isme.top)
-
-### Docs
-
-[Vue Naive Admin Docs](https://zclzone.github.io/vue-naive-admin-docs)
-
-
-### 目录描述
+## 目录描述
 
 ```
 Vue Naive Admin
@@ -172,10 +122,9 @@ Vue Naive Admin
 |   |   |-- http                        // 封装axios
 |   |   |-- storage                     // 封装localStorage和sessionStorage
 |   |-- views                           // 页面
-|   |   |-- demo                        // 示例
-|   |   |-- error-page                  // 错误页
-|   |   |-- login                       // 登录页
-|   |   |-- workbench                   // 首页  
+|   |   |-- user                        // 用户端
+|   |   |-- admin                       // 管理端
+|   |   |-- error-page                  // 错误页面
 |   |-- App.vue
 |   |-- main.js
 |-- .cz-config.js                       // git提交配置
@@ -200,4 +149,86 @@ Vue Naive Admin
 |-- unocss.config.js                    // unocss配置
 |-- vite.config.js                      // vite配置
 ```
+
+
+## 路由设计
+
+user/take-class
+user/software-list
+user/faq
+user/person-setting
+user/re-pw-info
+user/reset-password
+user/signup
+
+user/exam-list 【考试列表】
+
+user/contest/[examId] 【比赛：比赛题目列表页】
+user/contest/[examId]/problems/[problemId] 【比赛题目】
+user/contest/[examId]/score-rank-status【比赛成绩页面】
+user/contest/[examId]/score-only-rank
+user/contest/[examId]/score-top10
+
+user/training/[examId]【训练流程页】
+user/training/[examId]/problems/[problemId] 【训练题目】
+user/training/[examId]/score-train-rank 【训练成绩页面】
+
+
+
+### 权限控制和认证
+
+#### 认证
+admin端和user端分开存token
+
+#### 权限控制
+定义路由时定义角色
+角色： student, admin ...
+
+
+## 提示、通知和弹框
+
+全局声明了弹框相关的API
+
+提示（toast）
+```js
+$message.success('登录成功')
+$message.error('登录失败')
+$message.loading('正在尝试重新登录...')
+$message.removeMessage() //移除toast
+```
+通知
+```js
+$notification.info({
+	content: '信息',
+	duration: 2500,
+})
+
+```
+
+对话框
+```js
+
+$dialog.confirm
+$dialog.success
+$dialog.error
+```
+
+
+## 请求规范
+
+
+## CSS规范
+
+
+
+
+## 关于废弃页面
+
+submitList.jsp（没有内容）
+
+
+题解（tab）：目前没有用
+addProCommentByStudent （用于takeAnExam.jsp, viewTestCases.jsp , takeItranExam.jsp）、
+viewStuProblemCommentDetail (用于takeAnExam.jsp,  viewTestCases.jsp, takeItranExam.jsp)、
+viewTestCases (没有用到jsp，而是弹框).
 
